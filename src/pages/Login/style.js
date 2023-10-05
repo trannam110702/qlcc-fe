@@ -18,7 +18,7 @@ const LoginWrrapper = styled.div`
   .main {
     display: flex;
     justify-content: center;
-    img {
+    .sideimg {
       border-radius: 20px 0 0 20px;
       max-width: 500px;
     }

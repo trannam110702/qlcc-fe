@@ -1,10 +1,14 @@
 import "./App.css";
-import { AuthProvider } from "./hooks/useAuth";
+import { Outlet } from "react-router-dom";
+import AuthProvider from "./hooks/useAuth";
 import ProtectedRoute from "./pages/ProtectedRoute";
+
 function App() {
   return (
     <AuthProvider>
-      <ProtectedRoute></ProtectedRoute>
+      <ProtectedRoute>
+        <Outlet />
+      </ProtectedRoute>
     </AuthProvider>
   );
 }

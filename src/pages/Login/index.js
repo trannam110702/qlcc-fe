@@ -4,6 +4,7 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
 import background from "../../assets/images/background.jpg";
 import HongKong from "../../assets/images/hongkong.jpg";
+import favicon from "../../assets/images/logo.jpg";
 import LoginWrrapper from "./style";
 
 const LoginPage = () => {
@@ -25,10 +26,7 @@ const LoginPage = () => {
             onFinish={onFinish}
           >
             <div className="title">
-              <img
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/lotus.webp"
-                alt="logo"
-              ></img>
+              <img src={favicon} alt="logo"></img>
               Đăng nhập
             </div>
             <Form.Item
