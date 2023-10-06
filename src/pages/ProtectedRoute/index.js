@@ -1,12 +1,12 @@
-import { Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../hooks/useAuth";
+import Login from "../Login";
 import Layout from "../Layout";
 
 const ProtectedRoute = ({ children }) => {
-  const { token, accountType } = useContext(AuthContext);
-  if (!token) {
-    return <Navigate to="/" />;
+  const { userId, accountType } = useContext(AuthContext);
+  if (!userId && !accountType) {
+    return <Login />;
   }
   return <Layout>{children}</Layout>;
 };

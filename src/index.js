@@ -6,25 +6,20 @@ import {
   Navigate,
 } from "react-router-dom";
 import App from "./App";
-import Login from "./pages/Login";
 import Rooms from "./pages/Rooms";
+import AuthProvider from "./hooks/useAuth";
 
 import "./index.css";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: window.localStorage.getItem("token") ? (
-      <Navigate to="/dashboard" />
-    ) : (
-      <Login />
+    element: (
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     ),
     errorElement: <Navigate to="/" replace={true} />,
-  },
-  {
-    path: "/dashboard",
-    element: <App />,
-    errorElement: <Navigate to="/dashboard" replace={true} />,
     children: [
       {
         index: true,

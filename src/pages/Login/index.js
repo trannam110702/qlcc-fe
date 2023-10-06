@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import { Form, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
@@ -7,10 +7,20 @@ import HongKong from "../../assets/images/hongkong.jpg";
 import favicon from "../../assets/images/logo.jpg";
 import LoginWrrapper from "./style";
 
+import { AuthContext } from "../../hooks/useAuth";
+import { authApi } from "../../api/qlccApi";
 const LoginPage = () => {
-  const onFinish = (values) => {
-    console.log("Received values:", values);
-    // Add your login logic here
+  const { login } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const onFinish = async ({ username, password }) => {
+    try {
+      setLoading(true);
+      const res = await authApi.signIn(username, password);
+      if (res.data && res.status === 200) {
+        login({ userId: res.data.id, accountType: res.data.type });
+      }
+    } catch (error) {}
+    setLoading(false);
   };
 
   return (
@@ -60,6 +70,7 @@ const LoginPage = () => {
                 type="primary"
                 htmlType="submit"
                 className="login-form-button"
+                loading={loading}
               >
                 Log in
               </Button>

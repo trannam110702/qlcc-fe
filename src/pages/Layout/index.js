@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   TeamOutlined,
   UserOutlined,
@@ -12,7 +12,10 @@ import {
 import Logo from "../../assets/images/logo.jpg";
 import { Layout, Menu } from "antd";
 import LayoutWrapper from "./style";
+import { AuthContext } from "../../hooks/useAuth";
+import { authApi } from "../../api/qlccApi";
 const { Header, Content, Sider } = Layout;
+
 function getItem(label, key, icon, children) {
   return {
     key,
@@ -42,7 +45,12 @@ const items = [
   getItem("Quản lý tài khoản", "account", <SettingOutlined />),
 ];
 const MainLayout = () => {
+  const { logout } = useContext(AuthContext);
   const [collapsed, setCollapsed] = useState(false);
+  const logOut = async () => {
+    await authApi.logOut();
+    logout();
+  };
   return (
     <LayoutWrapper>
       <Layout className="main-layout">
@@ -54,7 +62,7 @@ const MainLayout = () => {
               <div className="dropdown">
                 <ul>
                   <li>Thông tin tài khoản</li>
-                  <li>Đăng xuất</li>
+                  <li onClick={logOut}>Đăng xuất</li>
                 </ul>
               </div>
             </div>
