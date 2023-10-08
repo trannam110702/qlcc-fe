@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   TeamOutlined,
   UserOutlined,
@@ -8,6 +9,7 @@ import {
   PayCircleOutlined,
   StockOutlined,
   SettingOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import Logo from "../../assets/images/logo.jpg";
 import { Layout, Menu } from "antd";
@@ -27,7 +29,7 @@ function getItem(label, key, icon, children) {
 const items = [
   getItem("Quản Lý Phòng", "room-sub", <HomeOutlined />, [
     getItem("Phòng", "room"),
-    getItem("Loại Phòng", "room-type"),
+    getItem("Loại Phòng", "roomtype"),
   ]),
   getItem("Quản lý dịch vụ", "service-sub", <BookOutlined />, [
     getItem("Bảng giá dịch vụ", "service-price"),
@@ -44,12 +46,24 @@ const items = [
   getItem("Thống kê", "statistics", <StockOutlined />),
   getItem("Quản lý tài khoản", "account", <SettingOutlined />),
 ];
-const MainLayout = () => {
+
+const MainLayout = ({ children }) => {
+  const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
   const [collapsed, setCollapsed] = useState(false);
+  const [logOutSpin, setLogOutSpin] = useState(false);
   const logOut = async () => {
-    await authApi.logOut();
-    logout();
+    try {
+      setLogOutSpin(true);
+      await authApi.logOut();
+    } catch (error) {
+    } finally {
+      logout();
+      setLogOutSpin(false);
+    }
+  };
+  const menuOnClick = ({ key }) => {
+    return navigate(key);
   };
   return (
     <LayoutWrapper>
@@ -62,7 +76,13 @@ const MainLayout = () => {
               <div className="dropdown">
                 <ul>
                   <li>Thông tin tài khoản</li>
-                  <li onClick={logOut}>Đăng xuất</li>
+                  <li onClick={logOut} className="logout">
+                    <span>Đăng xuất </span>
+                    <LoadingOutlined
+                      className="logout-spin"
+                      style={{ display: logOutSpin ? "block" : "none" }}
+                    />
+                  </li>
                 </ul>
               </div>
             </div>
@@ -75,9 +95,14 @@ const MainLayout = () => {
             onCollapse={(value) => setCollapsed(value)}
           >
             <div className="demo-logo-vertical" />
-            <Menu theme="dark" mode="inline" items={items} />
+            <Menu
+              theme="dark"
+              mode="inline"
+              items={items}
+              onClick={menuOnClick}
+            />
           </Sider>
-          <Content></Content>
+          <Content className="content">{children}</Content>
         </Layout>
       </Layout>
     </LayoutWrapper>

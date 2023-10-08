@@ -1,7 +1,8 @@
 import styled from "styled-components";
 const LayoutWrapper = styled.div`
   .main-layout {
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
     .header {
       padding: 0.5rem 1rem;
       display: flex;
@@ -42,6 +43,12 @@ const LayoutWrapper = styled.div`
               li:hover {
                 background-color: #001529;
               }
+              .logout {
+                display: flex;
+                .logout-spin {
+                  margin-left: 10px;
+                }
+              }
             }
           }
           .dropdown::before {
@@ -59,6 +66,9 @@ const LayoutWrapper = styled.div`
           display: block;
         }
       }
+    }
+    .content {
+      height: calc(100vh - 64px);
     }
   }
 `;

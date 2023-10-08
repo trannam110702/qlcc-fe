@@ -5,10 +5,11 @@ import {
   RouterProvider,
   Navigate,
 } from "react-router-dom";
-import App from "./App";
-import Rooms from "./pages/Rooms";
 import AuthProvider from "./hooks/useAuth";
-
+import App from "./App";
+import Welcome from "./pages/Welcome";
+import Rooms from "./pages/Rooms";
+import RoomType from "./pages/RoomType";
 import "./index.css";
 
 const router = createBrowserRouter([
@@ -23,7 +24,11 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Rooms />,
+        element: <Welcome />,
+      },
+      {
+        path: "roomtype",
+        element: <RoomType />,
       },
     ],
   },

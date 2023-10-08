@@ -17,7 +17,7 @@ const LoginPage = () => {
       setLoading(true);
       const res = await authApi.signIn(username, password);
       if (res.data && res.status === 200) {
-        login({ userId: res.data.id, accountType: res.data.type });
+        login({ userId: res.data.uuid, accountType: res.data.type });
       }
     } catch (error) {}
     setLoading(false);
