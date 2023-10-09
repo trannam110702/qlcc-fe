@@ -1,7 +1,8 @@
 import React from "react";
-import useLocalStorage from "../../hooks/useLocalStorage";
+import RoomWrapper from "./style";
+
 const Rooms = () => {
-  return <div>rooms</div>;
+  return <RoomWrapper>rooms</RoomWrapper>;
 };
 
 export default Rooms;

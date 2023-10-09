@@ -1,12 +1,5 @@
 import styled from "styled-components";
-const RoomTypeWrapper = styled.div`
-  nav {
-    height: 64px;
-    padding: 0.5rem;
-    display: flex;
-    justify-content: end;
-    align-items: center;
-  }
+const RoomWrapper = styled.div`
   height: 100%;
   .main-table,
   .ant-spin-nested-loading,
@@ -21,4 +14,4 @@ export const ButtonWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
 `;
-export default RoomTypeWrapper;
+export default RoomWrapper;

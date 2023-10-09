@@ -20,7 +20,7 @@ const roomTypeApi = {
     default_rent_cost,
     default_number_of_bed,
     default_number_of_fridge,
-    default_number_of_AC,
+    default_number_of_ac,
     default_number_of_desk,
   }) => {
     return axiosClient.post("/roomtype/add", {
@@ -29,12 +29,34 @@ const roomTypeApi = {
       default_rent_cost,
       default_number_of_bed,
       default_number_of_fridge,
-      default_number_of_AC,
+      default_number_of_ac,
       default_number_of_desk,
     });
   },
   delete: (id) => {
     return axiosClient.delete(`/roomtype/${id}`);
+  },
+  updateById: (
+    id,
+    {
+      name,
+      area,
+      default_rent_cost,
+      default_number_of_bed,
+      default_number_of_fridge,
+      default_number_of_ac,
+      default_number_of_desk,
+    }
+  ) => {
+    return axiosClient.post(`/roomtype/update/${id}`, {
+      name,
+      area,
+      default_rent_cost,
+      default_number_of_bed,
+      default_number_of_fridge,
+      default_number_of_ac,
+      default_number_of_desk,
+    });
   },
 };
 export { authApi, roomTypeApi };

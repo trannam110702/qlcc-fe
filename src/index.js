@@ -30,6 +30,10 @@ const router = createBrowserRouter([
         path: "roomtype",
         element: <RoomType />,
       },
+      {
+        path: "room",
+        element: <Rooms />,
+      },
     ],
   },
 ]);
