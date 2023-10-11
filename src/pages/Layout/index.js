@@ -11,7 +11,7 @@ import {
   SettingOutlined,
   LoadingOutlined,
 } from "@ant-design/icons";
-import Logo from "../../assets/images/logo.jpg";
+import Logo from "../../assets/images/logowhite.png";
 import { Layout, Menu } from "antd";
 import LayoutWrapper from "./style";
 import { AuthContext } from "../../hooks/useAuth";
@@ -26,7 +26,7 @@ function getItem(label, key, icon, children) {
     label,
   };
 }
-const items = [
+const adminItems = [
   getItem("Quản Lý Phòng", "room-sub", <HomeOutlined />, [
     getItem("Phòng", "room"),
     getItem("Loại Phòng", "roomtype"),
@@ -95,12 +95,7 @@ const MainLayout = ({ children }) => {
             onCollapse={(value) => setCollapsed(value)}
           >
             <div className="demo-logo-vertical" />
-            <Menu
-              theme="dark"
-              mode="inline"
-              items={items}
-              onClick={menuOnClick}
-            />
+            <Menu mode="inline" items={adminItems} onClick={menuOnClick} />
           </Sider>
           <Content className="content">{children}</Content>
         </Layout>

@@ -4,7 +4,7 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
 import background from "../../assets/images/background.jpg";
 import HongKong from "../../assets/images/hongkong.jpg";
-import favicon from "../../assets/images/logo.jpg";
+import favicon from "../../assets/images/logo.png";
 import LoginWrrapper from "./style";
 
 import { AuthContext } from "../../hooks/useAuth";

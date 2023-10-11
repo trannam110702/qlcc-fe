@@ -59,4 +59,108 @@ const roomTypeApi = {
     });
   },
 };
-export { authApi, roomTypeApi };
+const roomApi = {
+  getAll: () => {
+    return axiosClient.get("/room/getall");
+  },
+  getById: (id) => {
+    return axiosClient.get(`/room/${id}`);
+  },
+  add: ({
+    number,
+    type_id,
+    status,
+    number_of_bed,
+    number_of_fridge,
+    number_of_ac,
+    number_of_desk,
+  }) => {
+    return axiosClient.post("/room/add", {
+      number,
+      type_id,
+      status,
+      number_of_bed,
+      number_of_fridge,
+      number_of_ac,
+      number_of_desk,
+    });
+  },
+  delete: (id) => {
+    return axiosClient.delete(`/room/${id}`);
+  },
+  updateById: (
+    id,
+    {
+      number,
+      type_id,
+      status,
+      number_of_bed,
+      number_of_fridge,
+      number_of_ac,
+      number_of_desk,
+    }
+  ) => {
+    return axiosClient.post(`/room/update/${id}`, {
+      number,
+      type_id,
+      status,
+      number_of_bed,
+      number_of_fridge,
+      number_of_ac,
+      number_of_desk,
+    });
+  },
+};
+const residentApi = {
+  getAll: () => {
+    return axiosClient.get("/resident/getall");
+  },
+  getById: (id) => {
+    return axiosClient.get(`/resident/${id}`);
+  },
+  add: ({
+    number,
+    type_id,
+    status,
+    number_of_bed,
+    number_of_fridge,
+    number_of_ac,
+    number_of_desk,
+  }) => {
+    return axiosClient.post("/resident/add", {
+      number,
+      type_id,
+      status,
+      number_of_bed,
+      number_of_fridge,
+      number_of_ac,
+      number_of_desk,
+    });
+  },
+  delete: (id) => {
+    return axiosClient.delete(`/resident/${id}`);
+  },
+  updateById: (
+    id,
+    {
+      number,
+      type_id,
+      status,
+      number_of_bed,
+      number_of_fridge,
+      number_of_ac,
+      number_of_desk,
+    }
+  ) => {
+    return axiosClient.post(`/resident/update/${id}`, {
+      number,
+      type_id,
+      status,
+      number_of_bed,
+      number_of_fridge,
+      number_of_ac,
+      number_of_desk,
+    });
+  },
+};
+export { authApi, roomTypeApi, roomApi, residentApi };

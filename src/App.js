@@ -1,17 +1,16 @@
 import "./App.css";
-import React, { useContext } from "react";
+import React from "react";
 import { Outlet } from "react-router-dom";
-
-import { AuthContext } from "./hooks/useAuth";
 import ProtectedRoute from "./pages/ProtectedRoute";
-
+import AntdThemeCustom from "./store/AntdThemeCustom";
 
 function App() {
-
   return (
-    <ProtectedRoute>
-      <Outlet />
-    </ProtectedRoute>
+    <AntdThemeCustom>
+      <ProtectedRoute>
+        <Outlet />
+      </ProtectedRoute>
+    </AntdThemeCustom>
   );
 }
 

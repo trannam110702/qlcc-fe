@@ -1,19 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Modal, Form, InputNumber, Input } from "antd";
-import { formatCurrency } from "../../ultils";
+import RoomWrapper, { ButtonWrapper, StatusLabelWrapper } from "./style";
+import {
+  Table,
+  Button,
+  Modal,
+  Form,
+  Select,
+  InputNumber,
+  Input,
+  Tag,
+} from "antd";
 import IconButton from "../../components/IconButton";
-import RoomTypeWrapper, { ButtonWrapper } from "./style";
 
-import { roomTypeApi } from "../../api/qlccApi";
+import { roomApi, roomTypeApi } from "../../api/qlccApi";
 
-const RoomType = () => {
+const Residents = () => {
   const [form] = Form.useForm();
   const [formAdd] = Form.useForm();
+
   const [deleteModal, setDeleteModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [addModal, setAddModal] = useState(false);
   const [currentRecord, setCurrentRecord] = useState(null);
   const [roomTypes, setRoomTypes] = useState(null);
+  const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
   const columns = [
     {
@@ -25,60 +35,107 @@ const RoomType = () => {
       width: 50,
     },
     {
-      title: "Tên loại phòng",
-      dataIndex: "name",
-      key: "name",
+      title: "Số phòng",
+      dataIndex: "number",
+      key: "number",
       width: 200,
+      defaultSortOrder: "ascend",
       sorter: (a, b) => {
-        if (a.name < b.name) {
+        if (a.number < b.number) {
           return -1;
         }
-        if (a.name > b.name) {
+        if (a.number > b.number) {
           return 1;
         }
         return 0;
       },
+      filters: [
+        {
+          text: "Tầng 1",
+          value: "1",
+        },
+        {
+          text: "Tầng 2",
+          value: "2",
+        },
+        {
+          text: "Tầng 3",
+          value: "3",
+        },
+        {
+          text: "Tầng 4",
+          value: "4",
+        },
+        {
+          text: "Tầng 5",
+          value: "5",
+        },
+        {
+          text: "Tầng 6",
+          value: "6",
+        },
+      ],
+      onFilter: (value, record) => record.number.toString().startsWith(value),
     },
     {
-      title: "Diện tích",
-      dataIndex: "area",
-      key: "area",
+      title: "Loại phòng",
+      dataIndex: "type_name",
+      key: "type_name",
       width: 100,
-      sorter: (a, b) => a.area - b.area,
-    },
-    {
-      title: "Giá thuê mặc định (vnd)",
-      dataIndex: "default_rent_cost",
-      key: "default_rent_cost",
-      width: 150,
-      defaultSortOrder: "descend",
+      sorter: (a, b) => a.type_name - b.type_name,
+      filters: roomTypes?.map((item) => {
+        return { text: item.name, value: item.uuid };
+      }),
+      onFilter: (value, record) => record.type_id.startsWith(value),
       render: (text, record) => {
-        return formatCurrency(record.default_rent_cost);
+        return (
+          <>{roomTypes?.find((item) => item.uuid === record.type_id)?.name}</>
+        );
       },
-      sorter: (a, b) => a.default_rent_cost - b.default_rent_cost,
     },
     {
-      title: "Số giường mặc định",
-      dataIndex: "default_number_of_bed",
-      key: "default_number_of_bed",
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      width: 150,
+      filters: [
+        { text: "Trống", value: "empty" },
+        { text: "Có khách", value: "occupied" },
+      ],
+      onFilter: (value, record) => record.status.startsWith(value),
+      sorter: (a, b) => {
+        if (a.status < b.status) {
+          return -1;
+        }
+        if (a.status > b.status) {
+          return 1;
+        }
+        return 0;
+      },
+      render: (text, record) => <StatusLabel status={record.status} />,
+    },
+    {
+      title: "Số giường",
+      dataIndex: "number_of_bed",
+      key: "number_of_bed",
       width: 100,
     },
     {
-      title: "Số tủ lạnh mặc định",
-      dataIndex: "default_number_of_fridge",
-      key: "default_number_of_fridge",
+      title: "Số tủ lạnh",
+      dataIndex: "number_of_fridge",
+      key: "number_of_fridge",
       width: 100,
     },
     {
-      title: "Số điều hòa mặc định",
-      dataIndex: "default_number_of_ac",
-      key: "default_number_of_ac",
+      title: "Số điều hòa",
+      dataIndex: "number_of_ac",
+      key: "number_of_ac",
       width: 100,
     },
     {
-      title: "Số bàn làm việc mặc định",
-      dataIndex: "default_number_of_desk",
-      key: "default_number_of_desk",
+      title: "Số bàn làm việc",
+      dataIndex: "number_of_desk",
+      key: "number_of_desk",
       width: 100,
     },
     {
@@ -111,6 +168,20 @@ const RoomType = () => {
   ];
   const getData = async () => {
     try {
+      const res = await roomApi.getAll();
+      setRoom(
+        res.data.map((item) => {
+          return { ...item, key: item.uuid };
+        })
+      );
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+  const getRoomTypes = async () => {
+    try {
+      setLoading(true);
       const res = await roomTypeApi.getAll();
       setRoomTypes(
         res.data.map((item) => {
@@ -124,14 +195,15 @@ const RoomType = () => {
   };
   useEffect(() => {
     getData();
+    getRoomTypes();
   }, []);
   useEffect(() => {
     formAdd.resetFields();
   }, [addModal]);
   return (
-    <RoomTypeWrapper>
+    <RoomWrapper>
       <nav>
-        <div className="title">Danh sách loại phòng</div>
+        <div className="title">Danh sách cư dân</div>
         <Button
           type="primary"
           onClick={() => {
@@ -147,7 +219,7 @@ const RoomType = () => {
         className="main-table"
         columns={columns}
         pagination={false}
-        dataSource={roomTypes}
+        dataSource={room}
         loading={loading}
         scroll={{
           x: 1440,
@@ -161,7 +233,7 @@ const RoomType = () => {
           try {
             setLoading(true);
             setDeleteModal(false);
-            await roomTypeApi.delete(currentRecord.key);
+            await roomApi.delete(currentRecord.key);
           } catch (error) {
           } finally {
             getData();
@@ -183,10 +255,7 @@ const RoomType = () => {
             setLoading(true);
             setEditModal(false);
             console.log(form.getFieldsValue());
-            await roomTypeApi.updateById(
-              currentRecord.key,
-              form.getFieldsValue()
-            );
+            await roomApi.updateById(currentRecord.key, form.getFieldsValue());
           } catch (error) {
           } finally {
             getData();
@@ -199,8 +268,8 @@ const RoomType = () => {
       >
         <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} form={form}>
           <Form.Item
-            name="name"
-            label="Tên loại phòng"
+            name="number"
+            label="Số phòng"
             rules={[
               {
                 required: true,
@@ -210,60 +279,39 @@ const RoomType = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            name="area"
-            label="Diện tích (m2)"
+            name="type_id"
+            label="Loại phòng"
             rules={[
               {
                 required: true,
               },
             ]}
           >
-            <InputNumber
-              style={{
-                width: "100%",
-              }}
-              min="0"
-              step="0.5"
+            <Select
+              options={roomTypes?.map((item) => {
+                return { label: item.name, value: item.uuid };
+              })}
             />
           </Form.Item>
           <Form.Item
-            name="default_rent_cost"
-            label="Giá thuê mặc định (vnd)"
+            name="status"
+            label="Trạng thái"
             rules={[
               {
                 required: true,
               },
             ]}
           >
-            <InputNumber
-              style={{
-                width: "100%",
-              }}
-              min="0"
-              step="1"
-              formatter={formatCurrency}
+            <Select
+              options={[
+                { value: "occupied", label: "Có khách" },
+                { value: "empty", label: "Trống" },
+              ]}
             />
           </Form.Item>
           <Form.Item
-            name="default_number_of_ac"
-            label="Số điều hòa mặc định"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <InputNumber
-              style={{
-                width: "100%",
-              }}
-              min="0"
-              step="1"
-            />
-          </Form.Item>
-          <Form.Item
-            name="default_number_of_bed"
-            label="Số giường mặc định"
+            name="number_of_bed"
+            label="Số giường"
             rules={[
               {
                 required: true,
@@ -279,8 +327,8 @@ const RoomType = () => {
             />
           </Form.Item>
           <Form.Item
-            name="default_number_of_desk"
-            label="Số bàn làm việc mặc định"
+            name="number_of_fridge"
+            label="Số tủ lạnh"
             rules={[
               {
                 required: true,
@@ -296,8 +344,25 @@ const RoomType = () => {
             />
           </Form.Item>
           <Form.Item
-            name="default_number_of_fridge"
-            label="Số tủ lạnh mặc định"
+            name="number_of_ac"
+            label="Số điều hòa"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <InputNumber
+              style={{
+                width: "100%",
+              }}
+              min="0"
+              step="1"
+            />
+          </Form.Item>
+          <Form.Item
+            name="number_of_desk"
+            label="Số bàn làm việc"
             rules={[
               {
                 required: true,
@@ -315,14 +380,14 @@ const RoomType = () => {
         </Form>
       </Modal>
       <Modal
-        title="Thêm mới loại phòng"
+        title="Thêm mới phòng"
         width={800}
         open={addModal}
         onOk={async () => {
           try {
             setLoading(true);
             setAddModal(false);
-            await roomTypeApi.add(formAdd.getFieldsValue());
+            await roomApi.add(formAdd.getFieldsValue());
           } catch (error) {
           } finally {
             getData();
@@ -334,8 +399,8 @@ const RoomType = () => {
       >
         <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} form={formAdd}>
           <Form.Item
-            name="name"
-            label="Tên loại phòng"
+            name="number"
+            label="Số phòng"
             rules={[
               {
                 required: true,
@@ -345,60 +410,39 @@ const RoomType = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            name="area"
-            label="Diện tích (m2)"
+            name="type_id"
+            label="Loại phòng"
             rules={[
               {
                 required: true,
               },
             ]}
           >
-            <InputNumber
-              style={{
-                width: "100%",
-              }}
-              min="0"
-              step="0.5"
+            <Select
+              options={roomTypes?.map((item) => {
+                return { label: item.name, value: item.uuid };
+              })}
             />
           </Form.Item>
           <Form.Item
-            name="default_rent_cost"
-            label="Giá thuê mặc định (vnd)"
+            name="status"
+            label="Trạng thái"
             rules={[
               {
                 required: true,
               },
             ]}
           >
-            <InputNumber
-              style={{
-                width: "100%",
-              }}
-              min="0"
-              step="1"
-              formatter={formatCurrency}
+            <Select
+              options={[
+                { value: "occupied", label: "Có khách" },
+                { value: "empty", label: "Trống" },
+              ]}
             />
           </Form.Item>
           <Form.Item
-            name="default_number_of_ac"
-            label="Số điều hòa mặc định"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <InputNumber
-              style={{
-                width: "100%",
-              }}
-              min="0"
-              step="1"
-            />
-          </Form.Item>
-          <Form.Item
-            name="default_number_of_bed"
-            label="Số giường mặc định"
+            name="number_of_bed"
+            label="Số giường"
             rules={[
               {
                 required: true,
@@ -414,8 +458,8 @@ const RoomType = () => {
             />
           </Form.Item>
           <Form.Item
-            name="default_number_of_desk"
-            label="Số bàn làm việc mặc định"
+            name="number_of_fridge"
+            label="Số tủ lạnh"
             rules={[
               {
                 required: true,
@@ -431,8 +475,25 @@ const RoomType = () => {
             />
           </Form.Item>
           <Form.Item
-            name="default_number_of_fridge"
-            label="Số tủ lạnh mặc định"
+            name="number_of_ac"
+            label="Số điều hòa"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <InputNumber
+              style={{
+                width: "100%",
+              }}
+              min="0"
+              step="1"
+            />
+          </Form.Item>
+          <Form.Item
+            name="number_of_desk"
+            label="Số bàn làm việc"
             rules={[
               {
                 required: true,
@@ -449,7 +510,23 @@ const RoomType = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </RoomTypeWrapper>
+    </RoomWrapper>
   );
 };
-export default RoomType;
+const StatusLabel = ({ status }) => {
+  let text, color;
+  switch (status) {
+    case "empty":
+      text = "Trống";
+      color = "green";
+      break;
+    case "occupied":
+      text = "Có khách";
+      color = "blue";
+      break;
+    default:
+      text = "";
+  }
+  return <Tag color={color}>{text}</Tag>;
+};
+export default Residents;

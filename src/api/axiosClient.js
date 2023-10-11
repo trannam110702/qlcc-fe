@@ -15,6 +15,11 @@ axiosClient.interceptors.response.use(
     return response;
   },
   (error) => {
+    if (error.response.status === 401) {
+      window.localStorage.removeItem("userId");
+      window.localStorage.removeItem("accountType");
+      window.location.reload();
+    }
     throw error;
   }
 );

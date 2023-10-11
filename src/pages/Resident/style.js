@@ -18,6 +18,9 @@ const RoomWrapper = styled.div`
   .ant-spin-container {
     height: 100%;
   }
+  /* .ant-table-header {
+    height: 64px;
+  } */
 `;
 export const ButtonWrapper = styled.div`
   display: flex;

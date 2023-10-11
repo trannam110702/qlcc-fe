@@ -6,11 +6,12 @@ import {
   Navigate,
 } from "react-router-dom";
 import AuthProvider from "./hooks/useAuth";
+import "./index.css";
 import App from "./App";
 import Welcome from "./pages/Welcome";
 import Rooms from "./pages/Rooms";
 import RoomType from "./pages/RoomType";
-import "./index.css";
+import Residents from "./pages/Resident";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
       {
         path: "room",
         element: <Rooms />,
+      },
+      {
+        path: "resident",
+        element: <Residents />,
       },
     ],
   },
