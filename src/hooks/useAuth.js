@@ -10,12 +10,10 @@ export const AuthProvider = ({ children }) => {
   const login = async ({ userId, accountType }) => {
     setUserId(userId);
     setAccountType(accountType);
-    navigate("/dashboard");
+    navigate("/");
   };
 
   const logout = () => {
-    // setUserId(null);
-    // setAccountType(null);
     window.localStorage.removeItem("userId");
     window.localStorage.removeItem("accountType");
     navigate("/", { replace: true });

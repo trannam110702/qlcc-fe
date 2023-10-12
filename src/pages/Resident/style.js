@@ -1,6 +1,7 @@
 import styled from "styled-components";
 const RoomWrapper = styled.div`
   padding: 0 1rem;
+  height: 100%;
   nav {
     height: 64px;
     padding: 0.5rem;
@@ -12,11 +13,12 @@ const RoomWrapper = styled.div`
       font-weight: bold;
     }
   }
-  height: 100%;
-  .main-table,
   .ant-spin-nested-loading,
   .ant-spin-container {
     height: 100%;
+  }
+  .main-table {
+    height: calc(100% - 64px);
   }
   /* .ant-table-header {
     height: 64px;

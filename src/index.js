@@ -5,8 +5,9 @@ import {
   RouterProvider,
   Navigate,
 } from "react-router-dom";
-import AuthProvider from "./hooks/useAuth";
+
 import "./index.css";
+
 import App from "./App";
 import Welcome from "./pages/Welcome";
 import Rooms from "./pages/Rooms";
@@ -16,11 +17,7 @@ import Residents from "./pages/Resident";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    ),
+    element: <App />,
     errorElement: <Navigate to="/" replace={true} />,
     children: [
       {

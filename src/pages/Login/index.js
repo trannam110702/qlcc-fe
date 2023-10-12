@@ -8,9 +8,11 @@ import favicon from "../../assets/images/logo.png";
 import LoginWrrapper from "./style";
 
 import { AuthContext } from "../../hooks/useAuth";
+import { MessageContext } from "../../store/MessageContext";
 import { authApi } from "../../api/qlccApi";
 const LoginPage = () => {
   const { login } = useContext(AuthContext);
+  const { notifiApi } = useContext(MessageContext);
   const [loading, setLoading] = useState(false);
   const onFinish = async ({ username, password }) => {
     try {
@@ -18,8 +20,19 @@ const LoginPage = () => {
       const res = await authApi.signIn(username, password);
       if (res.data && res.status === 200) {
         login({ userId: res.data.uuid, accountType: res.data.type });
+        notifiApi.success({
+          message: `Đăng nhập thành công!`,
+          description: "Chào mừng trở lại!",
+          placement: "bottomRight",
+        });
       }
-    } catch (error) {}
+    } catch (error) {
+      notifiApi.error({
+        message: `Đăng nhập thất bại!`,
+        description: "Tài khoản hoặc mật khẩu không đúng!",
+        placement: "bottomRight",
+      });
+    }
     setLoading(false);
   };
 
@@ -42,9 +55,7 @@ const LoginPage = () => {
             <Form.Item
               name="username"
               label="Username"
-              rules={[
-                { required: true, message: "Please input your Username!" },
-              ]}
+              rules={[{ required: true, message: "Vui lòng nhập tài khoản!" }]}
             >
               <Input
                 prefix={<UserOutlined className="site-form-item-icon" />}
@@ -54,9 +65,7 @@ const LoginPage = () => {
             <Form.Item
               label="Password"
               name="password"
-              rules={[
-                { required: true, message: "Please input your Password!" },
-              ]}
+              rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
             >
               <Input
                 prefix={<LockOutlined className="site-form-item-icon" />}
@@ -72,7 +81,7 @@ const LoginPage = () => {
                 className="login-form-button"
                 loading={loading}
               >
-                Log in
+                Đăng nhập
               </Button>
             </Form.Item>
           </Form>

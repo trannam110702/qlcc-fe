@@ -180,6 +180,7 @@ const RoomType = () => {
         open={editModal}
         onOk={async () => {
           try {
+            await form.validateFields();
             setLoading(true);
             setEditModal(false);
             console.log(form.getFieldsValue());
@@ -320,6 +321,7 @@ const RoomType = () => {
         open={addModal}
         onOk={async () => {
           try {
+            await formAdd.validateFields();
             setLoading(true);
             setAddModal(false);
             await roomTypeApi.add(formAdd.getFieldsValue());

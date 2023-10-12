@@ -26,6 +26,7 @@ const AntdThemeCustom = ({ children }) => {
       },
     },
   };
+  if (window.innerWidth < 768) themeCustom.algorithm = theme.compactAlgorithm;
   return <ConfigProvider theme={themeCustom}>{children}</ConfigProvider>;
 };
 export default AntdThemeCustom;

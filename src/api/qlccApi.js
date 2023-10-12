@@ -6,6 +6,9 @@ const authApi = {
   logOut: () => {
     return axiosClient.post("/auth/logout", {});
   },
+  checkExpire: () => {
+    return axiosClient.get("/auth/checkexpire");
+  },
 };
 const roomTypeApi = {
   getAll: () => {
@@ -119,22 +122,22 @@ const residentApi = {
     return axiosClient.get(`/resident/${id}`);
   },
   add: ({
-    number,
-    type_id,
-    status,
-    number_of_bed,
-    number_of_fridge,
-    number_of_ac,
-    number_of_desk,
+    first_name,
+    last_name,
+    date_of_birth,
+    citizen_id,
+    phone_number,
+    room_id,
+    owner,
   }) => {
     return axiosClient.post("/resident/add", {
-      number,
-      type_id,
-      status,
-      number_of_bed,
-      number_of_fridge,
-      number_of_ac,
-      number_of_desk,
+      first_name,
+      last_name,
+      date_of_birth,
+      citizen_id,
+      phone_number,
+      room_id,
+      owner,
     });
   },
   delete: (id) => {
@@ -143,23 +146,23 @@ const residentApi = {
   updateById: (
     id,
     {
-      number,
-      type_id,
-      status,
-      number_of_bed,
-      number_of_fridge,
-      number_of_ac,
-      number_of_desk,
+      first_name,
+      last_name,
+      date_of_birth,
+      citizen_id,
+      phone_number,
+      room_id,
+      owner,
     }
   ) => {
     return axiosClient.post(`/resident/update/${id}`, {
-      number,
-      type_id,
-      status,
-      number_of_bed,
-      number_of_fridge,
-      number_of_ac,
-      number_of_desk,
+      first_name,
+      last_name,
+      date_of_birth,
+      citizen_id,
+      phone_number,
+      room_id,
+      owner,
     });
   },
 };

@@ -82,7 +82,15 @@ const Rooms = () => {
       dataIndex: "type_name",
       key: "type_name",
       width: 100,
-      sorter: (a, b) => a.type_name - b.type_name,
+      sorter: (a, b) => {
+        if (a.type_id < b.type_id) {
+          return -1;
+        }
+        if (a.type_id > b.type_id) {
+          return 1;
+        }
+        return 0;
+      },
       filters: roomTypes?.map((item) => {
         return { text: item.name, value: item.uuid };
       }),
@@ -252,6 +260,7 @@ const Rooms = () => {
         open={editModal}
         onOk={async () => {
           try {
+            await form.validateFields();
             setLoading(true);
             setEditModal(false);
             console.log(form.getFieldsValue());
@@ -385,6 +394,7 @@ const Rooms = () => {
         open={addModal}
         onOk={async () => {
           try {
+            await formAdd.validateFields();
             setLoading(true);
             setAddModal(false);
             await roomApi.add(formAdd.getFieldsValue());
