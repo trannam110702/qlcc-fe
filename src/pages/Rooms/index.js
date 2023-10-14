@@ -174,36 +174,31 @@ const Rooms = () => {
       width: 100,
     },
   ];
-  const getData = async () => {
+
+  const fetchData = async () => {
     try {
-      const res = await roomApi.getAll();
+      const rooms = await roomApi.getAll();
+      const roomTypes = await roomTypeApi.getAll();
+      const roomsWithStatus = await Promise.all(
+        rooms.data.map(async (item) => {
+          const status = await roomApi.getRoomStatus(item.uuid);
+          return {
+            status,
+            ...item,
+          };
+        })
+      );
       setRoom(
-        res.data.map((item) => {
-          return { ...item, key: item.uuid };
+        roomsWithStatus.map((item) => {
+          return { ...item, key: item.uuid, status: item.status?.data };
         })
       );
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
-  };
-  const getRoomTypes = async () => {
-    try {
-      setLoading(true);
-      const res = await roomTypeApi.getAll();
-      setRoomTypes(
-        res.data.map((item) => {
-          return { ...item, key: item.uuid };
-        })
-      );
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
+      setRoomTypes(roomTypes.data);
+    } catch (error) {}
   };
   useEffect(() => {
-    getData();
-    getRoomTypes();
+    fetchData();
+    setLoading(false);
   }, []);
   useEffect(() => {
     formAdd.resetFields();
@@ -228,7 +223,7 @@ const Rooms = () => {
         columns={columns}
         pagination={false}
         dataSource={room}
-        loading={loading}
+        loading={room ? loading : true}
         scroll={{
           x: 1440,
           y: window.innerHeight - 193,
@@ -244,7 +239,8 @@ const Rooms = () => {
             await roomApi.delete(currentRecord.key);
           } catch (error) {
           } finally {
-            getData();
+            await fetchData();
+            setLoading(false);
           }
         }}
         onCancel={() => {
@@ -267,7 +263,8 @@ const Rooms = () => {
             await roomApi.updateById(currentRecord.key, form.getFieldsValue());
           } catch (error) {
           } finally {
-            getData();
+            fetchData();
+            setLoading(false);
           }
         }}
         onCancel={() => {
@@ -302,22 +299,7 @@ const Rooms = () => {
               })}
             />
           </Form.Item>
-          <Form.Item
-            name="status"
-            label="Trạng thái"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Select
-              options={[
-                { value: "occupied", label: "Có khách" },
-                { value: "empty", label: "Trống" },
-              ]}
-            />
-          </Form.Item>
+
           <Form.Item
             name="number_of_bed"
             label="Số giường"
@@ -400,7 +382,8 @@ const Rooms = () => {
             await roomApi.add(formAdd.getFieldsValue());
           } catch (error) {
           } finally {
-            getData();
+            fetchData();
+            setLoading(false);
           }
         }}
         onCancel={() => {
@@ -432,24 +415,20 @@ const Rooms = () => {
               options={roomTypes?.map((item) => {
                 return { label: item.name, value: item.uuid };
               })}
+              onChange={(value) => {
+                const type = roomTypes.find((item) => item.uuid === value);
+                console.log(type);
+                const obj = {
+                  number_of_bed: type.default_number_of_bed,
+                  number_of_fridge: type.default_number_of_fridge,
+                  number_of_ac: type.default_number_of_ac,
+                  number_of_desk: type.default_number_of_desk,
+                };
+                formAdd.setFieldsValue(obj);
+              }}
             />
           </Form.Item>
-          <Form.Item
-            name="status"
-            label="Trạng thái"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Select
-              options={[
-                { value: "occupied", label: "Có khách" },
-                { value: "empty", label: "Trống" },
-              ]}
-            />
-          </Form.Item>
+
           <Form.Item
             name="number_of_bed"
             label="Số giường"

@@ -113,6 +113,12 @@ const roomApi = {
       number_of_desk,
     });
   },
+  getRoomStatus: (id) => {
+    return axiosClient.get(`/room/status/id/${id}`);
+  },
+  getRoomsByStatus: (status) => {
+    return axiosClient.get(`/room/status/${status}`);
+  },
 };
 const residentApi = {
   getAll: () => {
@@ -166,4 +172,107 @@ const residentApi = {
     });
   },
 };
-export { authApi, roomTypeApi, roomApi, residentApi };
+const serviceApi = {
+  getAll: () => {
+    return axiosClient.get("/service/getall");
+  },
+  getById: (id) => {
+    return axiosClient.get(`/service/${id}`);
+  },
+  add: ({ name, price, unit }) => {
+    return axiosClient.post("/service/add", {
+      name,
+      price,
+      unit,
+    });
+  },
+  delete: (id) => {
+    return axiosClient.delete(`/service/${id}`);
+  },
+  updateById: (id, { name, price, unit }) => {
+    return axiosClient.post(`/service/update/${id}`, {
+      name,
+      price,
+      unit,
+    });
+  },
+};
+const contractApi = {
+  getAll: () => {
+    return axiosClient.get("/contract/getall");
+  },
+  getById: (id) => {
+    return axiosClient.get(`/contract/${id}`);
+  },
+  add: ({
+    room_id,
+    signer,
+    from_date,
+    to_date,
+    rent_cost_per_month,
+    resident_list,
+  }) => {
+    return axiosClient.post("/contract/add", {
+      room_id,
+      signer,
+      from_date,
+      to_date,
+      rent_cost_per_month,
+      resident_list,
+    });
+  },
+  delete: (id) => {
+    return axiosClient.delete(`/contract/${id}`);
+  },
+  updateById: (
+    id,
+    { room_id, signer, from_date, to_date, rent_cost_per_month }
+  ) => {
+    return axiosClient.post(`/contract/update/${id}`, {
+      room_id,
+      signer,
+      from_date,
+      to_date,
+      rent_cost_per_month,
+    });
+  },
+};
+const serviceIndexApi = {
+  getAll: () => {
+    return axiosClient.get("/service-index/getall");
+  },
+  getById: (id) => {
+    return axiosClient.get(`/service-index/${id}`);
+  },
+  getByType: (type, roomId) => {
+    if (roomId)
+      return axiosClient.get(`/service-index/type/${type}?room-id=${roomId}`);
+  },
+  add: ({ type, room_id, index, time_record }) => {
+    return axiosClient.post("/service-index/add", {
+      type,
+      room_id,
+      index,
+      time_record,
+    });
+  },
+  delete: (id) => {
+    return axiosClient.delete(`/service-index/${id}`);
+  },
+  updateById: (id, { room_id, index, time_record }) => {
+    return axiosClient.post(`/service-index/update/${id}`, {
+      room_id,
+      index,
+      time_record,
+    });
+  },
+};
+export {
+  authApi,
+  roomTypeApi,
+  roomApi,
+  residentApi,
+  serviceApi,
+  contractApi,
+  serviceIndexApi,
+};

@@ -31,13 +31,12 @@ const adminItems = [
     getItem("Phòng", "room"),
     getItem("Loại Phòng", "roomtype"),
   ]),
-  getItem("Quản lý dịch vụ", "service-sub", <BookOutlined />, [
+  getItem("Quản lý dịch vụ", "service", <BookOutlined />, [
     getItem("Bảng giá dịch vụ", "service-price"),
     getItem("Cập nhật chỉ số", "service-index", <></>, [
-      getItem("Điện", "electric"),
-      getItem("Nước", "water"),
-      getItem("Giặt là", "laundry"),
-      getItem("Gửi xe", "parking"),
+      getItem("Điện", "service/electric"),
+      getItem("Nước", "service/water"),
+      getItem("Giặt là", "service/laundry"),
     ]),
   ]),
   getItem("Quản lý cư dân", "resident", <IdcardOutlined />),

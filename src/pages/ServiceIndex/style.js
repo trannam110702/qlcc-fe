@@ -1,5 +1,5 @@
 import styled from "styled-components";
-const RoomTypeWrapper = styled.div`
+const ServiceIndexWrapper = styled.div`
   padding: 0 1rem;
   nav {
     height: 64px;
@@ -10,6 +10,14 @@ const RoomTypeWrapper = styled.div`
     .title {
       font-size: 1rem;
       font-weight: bold;
+    }
+    .right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      .select {
+        width: 150px;
+      }
     }
   }
   height: 100%;
@@ -26,4 +34,4 @@ export const ButtonWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
 `;
-export default RoomTypeWrapper;
+export default ServiceIndexWrapper;

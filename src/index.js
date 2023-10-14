@@ -13,6 +13,9 @@ import Welcome from "./pages/Welcome";
 import Rooms from "./pages/Rooms";
 import RoomType from "./pages/RoomType";
 import Residents from "./pages/Resident";
+import Contract from "./pages/Contract";
+import ServiceIndex from "./pages/ServiceIndex";
+import ServicePrice from "./pages/ServicePrice";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +38,18 @@ const router = createBrowserRouter([
       {
         path: "resident",
         element: <Residents />,
+      },
+      {
+        path: "contract",
+        element: <Contract />,
+      },
+      {
+        path: "service/:type",
+        element: <ServiceIndex />,
+      },
+      {
+        path: "service-price",
+        element: <ServicePrice />,
       },
     ],
   },

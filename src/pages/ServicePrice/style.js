@@ -1,5 +1,5 @@
 import styled from "styled-components";
-const RoomTypeWrapper = styled.div`
+const ServicePriceWrapper = styled.div`
   padding: 0 1rem;
   nav {
     height: 64px;
@@ -18,12 +18,10 @@ const RoomTypeWrapper = styled.div`
   .ant-spin-container {
     height: 100%;
   }
-  .ant-table-header {
-    max-height: 64px;
-  }
 `;
 export const ButtonWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
 `;
-export default RoomTypeWrapper;
+
+export default ServicePriceWrapper;

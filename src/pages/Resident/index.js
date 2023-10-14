@@ -26,7 +26,7 @@ const Residents = () => {
   const [editModal, setEditModal] = useState(false);
   const [addModal, setAddModal] = useState(false);
   const [currentRecord, setCurrentRecord] = useState(null);
-  const [room, setRoom] = useState(null);
+  const [rooms, setRooms] = useState(null);
   const [residents, setResidents] = useState(null);
   const [loading, setLoading] = useState(true);
   const columns = [
@@ -84,6 +84,7 @@ const Residents = () => {
       dataIndex: "room_id",
       key: "room_id",
       width: 100,
+      render: (text) => rooms?.find((item) => item.uuid === text)?.number,
     },
     {
       title: "Chủ phòng",
@@ -134,14 +135,23 @@ const Residents = () => {
           return { ...item, key: item.uuid };
         })
       );
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
+    } catch (error) {}
+  };
+  const getRooms = async () => {
+    try {
+      const res = await roomApi.getAll();
+      setRooms(
+        res.data.map((item) => {
+          return { ...item, key: item.uuid };
+        })
+      );
+    } catch (error) {}
   };
 
   useEffect(() => {
-    getData();
+    Promise.all([getData(), getRooms()]).then(() => {
+      setLoading(false);
+    });
   }, []);
   useEffect(() => {
     formAdd.resetFields();
@@ -183,11 +193,13 @@ const Residents = () => {
           } catch (error) {
           } finally {
             getData();
+            setLoading(false);
           }
         }}
         onCancel={() => {
           setDeleteModal(false);
           setCurrentRecord(null);
+          setLoading(false);
         }}
       >
         <p>Bạn có chắc muốn xóa bản ghi này?</p>
@@ -219,6 +231,7 @@ const Residents = () => {
           form.resetFields();
           setEditModal(false);
           setCurrentRecord(null);
+          setLoading(false);
         }}
       >
         <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} form={form}>

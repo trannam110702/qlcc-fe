@@ -5,7 +5,7 @@ const IconType = ({ type, onclick }) => {
   switch (type) {
     case "edit":
       return (
-        <div style={{ color: "#FED766" }}>
+        <div style={{ color: "#135200" }}>
           <EditOutlined />
         </div>
       );

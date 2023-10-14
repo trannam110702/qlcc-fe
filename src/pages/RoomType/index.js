@@ -96,13 +96,13 @@ const RoomType = () => {
                 setEditModal(true);
               }}
             />
-            <IconButton
+            {/* <IconButton
               type="delete"
               onclick={() => {
                 setCurrentRecord(record);
                 setDeleteModal(true);
               }}
-            />
+            /> */}
           </ButtonWrapper>
         );
       },
@@ -133,6 +133,7 @@ const RoomType = () => {
       <nav>
         <div className="title">Danh sách loại phòng</div>
         <Button
+          disabled
           type="primary"
           onClick={() => {
             setAddModal(true);
@@ -208,7 +209,7 @@ const RoomType = () => {
               },
             ]}
           >
-            <Input />
+            <Input disabled />
           </Form.Item>
           <Form.Item
             name="area"
