@@ -7,15 +7,14 @@ import {
   Modal,
   Form,
   InputNumber,
-  Input,
+  Switch,
   DatePicker,
   Select,
-  Space,
-  Divider,
 } from "antd";
-import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
+import { CloseOutlined } from "@ant-design/icons";
 import IconButton from "../../components/IconButton";
 import { formatCurrency } from "../../ultils";
+import AntdSpin from "../../components/Spin";
 import {
   contractApi,
   roomApi,
@@ -52,12 +51,14 @@ const ServicePrice = () => {
       dataIndex: "room_id",
       key: "room_id",
       width: 100,
-      defaultSortOrder: "descend",
+      defaultSortOrder: "ascend",
       sorter: (a, b) => {
-        if (a.room_id < b.room_id) {
+        let aNum = rooms?.find((item) => item.uuid === a.room_id).number;
+        let bNum = rooms?.find((item) => item.uuid === b.room_id).number;
+        if (aNum < bNum) {
           return -1;
         }
-        if (a.room_id > b.room_id) {
+        if (aNum > bNum) {
           return 1;
         }
         return 0;
@@ -80,7 +81,7 @@ const ServicePrice = () => {
       },
       render: (text) => {
         const resident = residents?.find((item) => item.uuid === text);
-        return `${resident?.first_name} ${resident?.last_name}`;
+        return `${resident?.last_name} ${resident?.first_name}`;
       },
     },
     {
@@ -96,6 +97,35 @@ const ServicePrice = () => {
       key: "to_date",
       width: 100,
       render: (text) => dayjs(text).format("DD-MM-YYYY"),
+    },
+    {
+      title: "Hiệu lực",
+      dataIndex: "status",
+      key: "status",
+      width: 100,
+      filters: [
+        { text: "Có hiệu lực", value: true },
+        { text: "Vô hiệu", value: false },
+      ],
+      onFilter: (value, record) => record.status === value,
+      render: (text, record) => {
+        return (
+          <>
+            <Switch
+              defaultChecked={text}
+              onChange={async (value) => {
+                setLoading(true);
+                await contractApi.setStatus(value, record.uuid);
+                await getData();
+                setLoading(false);
+              }}
+            />
+            <span style={{ marginLeft: "1rem" }}>
+              {text ? "Có hiệu lực" : "Vô hiệu"}
+            </span>
+          </>
+        );
+      },
     },
     {
       title: "Hành động",
@@ -204,18 +234,22 @@ const ServicePrice = () => {
         </Button>
       </nav>
 
-      <Table
-        bordered
-        className="main-table"
-        columns={columns}
-        pagination={false}
-        dataSource={contracts}
-        loading={loading}
-        scroll={{
-          x: 960,
-          y: window.innerHeight - 193,
-        }}
-      />
+      {contracts && rooms && residents ? (
+        <Table
+          bordered
+          className="main-table"
+          columns={columns}
+          pagination={false}
+          dataSource={contracts}
+          loading={contracts && rooms && residents && loading}
+          scroll={{
+            x: 1280,
+            y: window.innerHeight - 193,
+          }}
+        />
+      ) : (
+        <AntdSpin />
+      )}
       <Modal
         title="Xác nhận xóa"
         open={deleteModal}

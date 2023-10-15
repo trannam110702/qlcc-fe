@@ -236,6 +236,9 @@ const contractApi = {
       rent_cost_per_month,
     });
   },
+  setStatus: (status, id) => {
+    return axiosClient.post(`/contract/status`, { status, id });
+  },
 };
 const serviceIndexApi = {
   getAll: () => {

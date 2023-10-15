@@ -18,18 +18,24 @@ const LoginPage = () => {
     try {
       setLoading(true);
       const res = await authApi.signIn(username, password);
-      if (res.data && res.status === 200) {
+      if (res.data && res.status === 200 && res.data.uuid && res.data.type) {
         login({ userId: res.data.uuid, accountType: res.data.type });
         notifiApi.success({
           message: `Đăng nhập thành công!`,
           description: "Chào mừng trở lại!",
           placement: "bottomRight",
         });
+      } else if (res.data === "fail") {
+        notifiApi.error({
+          message: `Sai tài khoản hoặc mật khẩu`,
+          description: "Tài khoản hoặc mật khẩu không đúng!",
+          placement: "bottomRight",
+        });
       }
     } catch (error) {
       notifiApi.error({
-        message: `Đăng nhập thất bại!`,
-        description: "Tài khoản hoặc mật khẩu không đúng!",
+        message: `Lỗi server`,
+        description: "Không thể kết nối!",
         placement: "bottomRight",
       });
     }

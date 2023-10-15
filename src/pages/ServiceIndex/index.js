@@ -7,7 +7,7 @@ import {
   Modal,
   Form,
   InputNumber,
-  Input,
+  Switch,
   Select,
   DatePicker,
 } from "antd";
@@ -155,12 +155,22 @@ const ServiceIndex = () => {
         <div className="title">Danh sách chỉ số {typeName}</div>
         <div className="right">
           <Select
+            loading={!rooms}
             className="select"
             showSearch
             allowClear
+            filterSort={(a, b) => {
+              if (a.label < b.label) {
+                return -1;
+              }
+              if (a.label > b.label) {
+                return 1;
+              }
+              return 0;
+            }}
             placeholder="Chọn phòng"
             options={rooms?.map((item) => {
-              return { label: item.number, value: item.number };
+              return { label: `Phòng ${item.number}`, value: item.number };
             })}
             onChange={(value) => {
               setRoomId(rooms?.find((item) => item.number === value)?.uuid);
@@ -188,6 +198,27 @@ const ServiceIndex = () => {
           y: window.innerHeight - 193,
         }}
       />
+      <Modal
+        title="Xác nhận xóa"
+        open={deleteModal}
+        onOk={async () => {
+          try {
+            setLoading(true);
+            setDeleteModal(false);
+            await serviceIndexApi.delete(currentRecord.key);
+          } catch (error) {
+          } finally {
+            await fetchData();
+            setLoading(false);
+          }
+        }}
+        onCancel={() => {
+          setDeleteModal(false);
+          setCurrentRecord(null);
+        }}
+      >
+        <p>Bạn có chắc muốn xóa bản ghi này?</p>
+      </Modal>
       <Modal
         title={`Chỉnh sửa chỉ số ${typeName}`}
         width={800}

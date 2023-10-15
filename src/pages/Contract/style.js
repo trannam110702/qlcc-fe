@@ -22,6 +22,9 @@ const ContractWrapper = styled.div`
     display: flex;
     justify-content: center;
   }
+  td ~ button[aria-checked="true"] {
+    background-color: red;
+  }
 `;
 export const ButtonWrapper = styled.div`
   display: flex;

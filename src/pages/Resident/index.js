@@ -192,7 +192,7 @@ const Residents = () => {
             await residentApi.delete(currentRecord.key);
           } catch (error) {
           } finally {
-            getData();
+            await getData();
             setLoading(false);
           }
         }}
@@ -213,7 +213,6 @@ const Residents = () => {
             await form.validateFields();
             setLoading(true);
             setEditModal(false);
-            console.log(form.getFieldsValue());
             await residentApi.updateById(currentRecord.key, {
               ...form.getFieldsValue(),
               date_of_birth: form
@@ -224,7 +223,8 @@ const Residents = () => {
           } finally {
             form.resetFields();
             setCurrentRecord(null);
-            getData();
+            await getData();
+            setLoading(false);
           }
         }}
         onCancel={() => {
@@ -291,8 +291,16 @@ const Residents = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item name="room_id" label="Phòng">
-            <Input />
+          <Form.Item
+            name="room_id"
+            label="Phòng"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input disabled />
           </Form.Item>
           <Form.Item name="owner" label="Là chủ phòng" valuePropName="checked">
             <Checkbox>Có là chủ phòng</Checkbox>
@@ -316,11 +324,13 @@ const Residents = () => {
             });
           } catch (error) {
           } finally {
-            getData();
+            await getData();
+            setLoading(false);
           }
         }}
         onCancel={() => {
           setAddModal(false);
+          setLoading(false);
         }}
       >
         <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} form={formAdd}>
@@ -378,9 +388,6 @@ const Residents = () => {
               },
             ]}
           >
-            <Input />
-          </Form.Item>
-          <Form.Item name="room_id" label="Phòng">
             <Input />
           </Form.Item>
           <Form.Item name="owner" label="Là chủ phòng">
