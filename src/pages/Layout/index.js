@@ -16,6 +16,7 @@ import { Layout, Menu } from "antd";
 import LayoutWrapper from "./style";
 import { AuthContext } from "../../hooks/useAuth";
 import { authApi } from "../../api/qlccApi";
+import useLocalStorage from "../../hooks/useLocalStorage";
 const { Header, Content, Sider } = Layout;
 
 function getItem(label, key, icon, children) {
@@ -26,6 +27,7 @@ function getItem(label, key, icon, children) {
     label,
   };
 }
+
 const adminItems = [
   getItem("Quản Lý Phòng", "room-sub", <HomeOutlined />, [
     getItem("Phòng", "room"),
@@ -41,13 +43,22 @@ const adminItems = [
   ]),
   getItem("Quản lý cư dân", "resident", <IdcardOutlined />),
   getItem("Hợp đồng thuê", "contract", <TeamOutlined />),
-  getItem("Hóa đơn", "invoice", <PayCircleOutlined />),
+  getItem("Quản lý hóa đơn", "invoice", <PayCircleOutlined />, [
+    getItem("Tạo hóa đơn", "invoice/create"),
+    getItem("Hóa đơn", "invoice"),
+  ]),
   getItem("Thống kê", "statistics", <StockOutlined />),
+  getItem("Quản lý tài khoản", "accounts", <SettingOutlined />),
+];
+const residentItems = [
+  getItem("Hóa đơn", "invoice", <PayCircleOutlined />),
+  getItem("Phản hồi & Kiến nghị", "feed-back", <TeamOutlined />),
   getItem("Quản lý tài khoản", "account", <SettingOutlined />),
 ];
-
 const MainLayout = ({ children }) => {
+  let items;
   const navigate = useNavigate();
+  const [accountType] = useLocalStorage("accountType");
   const { logout } = useContext(AuthContext);
   const [collapsed, setCollapsed] = useState(false);
   const [logOutSpin, setLogOutSpin] = useState(false);
@@ -64,6 +75,16 @@ const MainLayout = ({ children }) => {
   const menuOnClick = ({ key }) => {
     return navigate(key);
   };
+  switch (accountType) {
+    case "admin":
+      items = adminItems;
+      break;
+    case "resident":
+      items = residentItems;
+      break;
+    default:
+      break;
+  }
   return (
     <LayoutWrapper>
       <Layout className="main-layout">
@@ -94,7 +115,12 @@ const MainLayout = ({ children }) => {
             onCollapse={(value) => setCollapsed(value)}
           >
             <div className="demo-logo-vertical" />
-            <Menu mode="inline" items={adminItems} onClick={menuOnClick} />
+            <Menu
+              mode="inline"
+              items={items}
+              onClick={menuOnClick}
+              style={{ overflowY: "auto", height: "100%" }}
+            />
           </Sider>
           <Content className="content">{children}</Content>
         </Layout>

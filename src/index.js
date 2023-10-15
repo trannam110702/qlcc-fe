@@ -16,6 +16,9 @@ import Residents from "./pages/Resident";
 import Contract from "./pages/Contract";
 import ServiceIndex from "./pages/ServiceIndex";
 import ServicePrice from "./pages/ServicePrice";
+import Invoice from "./pages/Invoice";
+import CreateInvoice from "./pages/CreateInvoice";
+import AccountsManagement from "./pages/AccountsManagement";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +53,18 @@ const router = createBrowserRouter([
       {
         path: "service-price",
         element: <ServicePrice />,
+      },
+      {
+        path: "invoice",
+        element: <Invoice />,
+      },
+      {
+        path: "invoice/create",
+        element: <CreateInvoice />,
+      },
+      {
+        path: "accounts",
+        element: <AccountsManagement />,
       },
     ],
   },

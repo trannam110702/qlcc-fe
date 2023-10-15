@@ -18,6 +18,7 @@ const LoginPage = () => {
     try {
       setLoading(true);
       const res = await authApi.signIn(username, password);
+      console.log(res);
       if (res.data && res.status === 200 && res.data.uuid && res.data.type) {
         login({ userId: res.data.uuid, accountType: res.data.type });
         notifiApi.success({

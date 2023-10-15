@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import dayjs from "dayjs";
 import ContractWrapper, { ButtonWrapper } from "./style";
 import {
@@ -12,9 +12,10 @@ import {
   Select,
 } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
-import IconButton from "../../components/IconButton";
-import { formatCurrency } from "../../ultils";
 import AntdSpin from "../../components/Spin";
+import IconButton from "../../components/IconButton";
+import { MessageContext } from "../../store/MessageContext";
+import { formatCurrency } from "../../ultils";
 import {
   contractApi,
   roomApi,
@@ -26,7 +27,7 @@ const ServicePrice = () => {
   const { RangePicker } = DatePicker;
   const [editForm] = Form.useForm();
   const [addForm] = Form.useForm();
-
+  const { notifiApi } = useContext(MessageContext);
   const [deleteModal, setDeleteModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [addModal, setAddModal] = useState(false);
@@ -37,6 +38,9 @@ const ServicePrice = () => {
   const [roomTypes, setRoomTypes] = useState(null);
   const [residents, setResidents] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [, updateState] = useState();
+
   const columns = [
     {
       align: "center",
@@ -115,8 +119,14 @@ const ServicePrice = () => {
               defaultChecked={text}
               onChange={async (value) => {
                 setLoading(true);
-                await contractApi.setStatus(value, record.uuid);
-                await getData();
+                try {
+                  await contractApi.setStatus(value, record.uuid);
+                  await getData();
+                } catch (error) {
+                  notifiApi.error({ message: error.response.data });
+                  setContracts(null);
+                  await getData();
+                }
                 setLoading(false);
               }}
             />
@@ -355,7 +365,7 @@ const ServicePrice = () => {
               },
             ]}
           >
-            <RangePicker disabled placeholder={["Bắt đầu", "Kết thúc"]} />
+            <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} />
           </Form.Item>
           <Form.Item
             name="rent_cost_per_month"

@@ -270,6 +270,17 @@ const serviceIndexApi = {
     });
   },
 };
+const accountApi = {
+  getAll: () => {
+    return axiosClient.get("/account/getall");
+  },
+  updatePassword: (username, password) => {
+    return axiosClient.post(`/account/update`, { username, password });
+  },
+  delete: (id) => {
+    return axiosClient.delete(`/account/${id}`);
+  },
+};
 export {
   authApi,
   roomTypeApi,
@@ -278,4 +289,5 @@ export {
   serviceApi,
   contractApi,
   serviceIndexApi,
+  accountApi,
 };
