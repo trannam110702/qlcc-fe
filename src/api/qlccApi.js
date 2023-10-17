@@ -204,6 +204,9 @@ const contractApi = {
   getById: (id) => {
     return axiosClient.get(`/contract/${id}`);
   },
+  getByStatus: (status) => {
+    return axiosClient.get(`/contract/status/${status}`);
+  },
   add: ({
     room_id,
     signer,
@@ -281,6 +284,11 @@ const accountApi = {
     return axiosClient.delete(`/account/${id}`);
   },
 };
+const invoiceApi = {
+  createInvoices: ({ time, name, targetContracts }) => {
+    return axiosClient.post("/invoice/create", { time, name, targetContracts });
+  },
+};
 export {
   authApi,
   roomTypeApi,
@@ -290,4 +298,5 @@ export {
   contractApi,
   serviceIndexApi,
   accountApi,
+  invoiceApi,
 };

@@ -44,7 +44,7 @@ const adminItems = [
   getItem("Quản lý cư dân", "resident", <IdcardOutlined />),
   getItem("Hợp đồng thuê", "contract", <TeamOutlined />),
   getItem("Quản lý hóa đơn", "invoice", <PayCircleOutlined />, [
-    getItem("Tạo hóa đơn", "invoice/create"),
+    getItem("Tạo hóa đơn hàng tháng", "invoice/create"),
     getItem("Hóa đơn", "invoice"),
   ]),
   getItem("Thống kê", "statistics", <StockOutlined />),
@@ -110,6 +110,7 @@ const MainLayout = ({ children }) => {
         </Header>
         <Layout>
           <Sider
+            width={250}
             collapsible
             collapsed={collapsed}
             onCollapse={(value) => setCollapsed(value)}
