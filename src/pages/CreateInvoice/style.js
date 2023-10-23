@@ -6,11 +6,17 @@ const CreateInvoiceWrapper = styled.div`
   border-radius: 10px;
   height: calc(100% - 2rem);
   position: relative;
+  .title {
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 1rem;
+  }
 `;
 export const ContentWrapper = styled.div`
   margin-top: 1rem;
-  padding: 2rem;
-  height: calc(100% - 64px - 64px);
+  padding: 1rem;
+  height: calc(100% - 64px - 1rem);
   overflow-y: auto;
 `;
 export const ControlButtons = styled.div`
@@ -20,6 +26,10 @@ export const ControlButtons = styled.div`
   button {
     height: 2rem;
   }
+`;
+export const ButtonWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
 `;
 export const InvoiceConfigWrapper = styled.div``;
 export default CreateInvoiceWrapper;

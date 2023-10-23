@@ -1,4 +1,6 @@
 import { ConfigProvider, theme } from "antd";
+import viVN from "antd/locale/vi_VN";
+import "moment/locale/vi";
 const color = {
   sider: "#fafffe",
   siderTrigger: "#2f9382",
@@ -27,6 +29,10 @@ const AntdThemeCustom = ({ children }) => {
     },
   };
   if (window.innerWidth < 768) themeCustom.algorithm = theme.compactAlgorithm;
-  return <ConfigProvider theme={themeCustom}>{children}</ConfigProvider>;
+  return (
+    <ConfigProvider locale={viVN} theme={themeCustom}>
+      {children}
+    </ConfigProvider>
+  );
 };
 export default AntdThemeCustom;

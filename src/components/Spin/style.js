@@ -4,7 +4,7 @@ const Wrapper = styled.div`
   margin-bottom: 20px;
   padding: 30px 50px;
   text-align: center;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0);
   border-radius: 4px;
 `;
 export default Wrapper;

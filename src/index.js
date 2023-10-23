@@ -19,6 +19,7 @@ import ServicePrice from "./pages/ServicePrice";
 import Invoice from "./pages/Invoice";
 import CreateInvoice from "./pages/CreateInvoice";
 import AccountsManagement from "./pages/AccountsManagement";
+import Purchase from "./pages/Purchase";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: "service/:type",
         element: <ServiceIndex />,
+      },
+      {
+        path: "purchase",
+        element: <Purchase />,
       },
       {
         path: "service-price",

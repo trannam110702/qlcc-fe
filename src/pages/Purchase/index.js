@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import ServiceIndexWrapper, { ButtonWrapper } from "./style";
+import PurchaseWrapper, { ButtonWrapper } from "./style";
 import {
   Table,
   Button,
@@ -10,31 +10,15 @@ import {
   Switch,
   Select,
   DatePicker,
+  Input,
 } from "antd";
 import IconButton from "../../components/IconButton";
 import dayjs from "dayjs";
-import { serviceIndexApi, roomApi } from "../../api/qlccApi";
-const ServiceIndex = () => {
-  const navigate = useNavigate();
-  const { type } = useParams();
-  useEffect(() => {
-    if (!["electric", "water", "parking", "laundry"].includes(type))
-      navigate("/");
-  }, []);
-  let typeName = useMemo(() => {
-    switch (type) {
-      case "electric":
-        return "điện";
-      case "water":
-        return "nước";
-      case "parking":
-        return "gửi xe";
-      case "laundry":
-        return "giặt là";
-      default:
-    }
-  }, [type]);
+import { purchaseApi, roomApi } from "../../api/qlccApi";
+import { formatCurrency } from "../../ultils";
 
+const { TextArea } = Input;
+const Purchase = () => {
   const [editForm] = Form.useForm();
   const [addForm] = Form.useForm();
   const [deleteModal, setDeleteModal] = useState(false);
@@ -43,7 +27,7 @@ const ServiceIndex = () => {
   const [rooms, setRooms] = useState(null);
   const [roomId, setRoomId] = useState(null);
   const [currentRecord, setCurrentRecord] = useState(null);
-  const [serviceIndexes, setServiceIndexes] = useState([]);
+  const [purchasees, setpurchasees] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useMemo(async () => {
@@ -72,12 +56,12 @@ const ServiceIndex = () => {
       render: (text) => rooms?.find((item) => item.uuid === text)?.number,
     },
     {
-      title: "Chỉ số",
-      dataIndex: "index",
-      key: "index",
+      title: "Số tiền",
+      dataIndex: "amount",
+      key: "amount",
       width: 100,
+      render: (text) => formatCurrency(text),
     },
-
     {
       title: "Ngày ghi nhận",
       dataIndex: "time_record",
@@ -94,6 +78,12 @@ const ServiceIndex = () => {
         return 0;
       },
       render: (text) => dayjs(text).format("DD-MM-YYYY"),
+    },
+    {
+      title: "Ghi chú",
+      dataIndex: "note",
+      key: "note",
+      width: 100,
     },
     {
       title: "Hành động",
@@ -128,31 +118,30 @@ const ServiceIndex = () => {
   ];
   const fetchData = async () => {
     try {
-      setLoading(true);
-      const serviceIndexesByType = await serviceIndexApi.getByType(
-        type,
-        roomId
-      );
-      setServiceIndexes(
-        serviceIndexesByType.data.map((item) => {
-          return { ...item, key: item.uuid };
-        })
-      );
+      if (roomId) {
+        setLoading(true);
+        const purchase = await purchaseApi.getByRoomId(roomId);
+        setpurchasees(
+          purchase.data.map((item) => {
+            return { ...item, key: item.uuid };
+          })
+        );
+      }
     } catch (error) {}
   };
   useEffect(() => {
     if (roomId) {
-      setServiceIndexes(null);
+      setpurchasees(null);
       fetchData();
     } else {
-      setServiceIndexes([]);
+      setpurchasees([]);
     }
     setLoading(false);
-  }, [type, roomId]);
+  }, [roomId]);
   return (
-    <ServiceIndexWrapper>
+    <PurchaseWrapper>
       <nav>
-        <div className="title">Danh sách chỉ số {typeName}</div>
+        <div className="title">Danh sách mua hàng</div>
         <div className="right">
           <Select
             loading={!rooms}
@@ -191,8 +180,8 @@ const ServiceIndex = () => {
         className="main-table"
         columns={columns}
         pagination={false}
-        dataSource={serviceIndexes}
-        loading={serviceIndexes ? loading : true}
+        dataSource={purchasees}
+        loading={purchasees ? loading : true}
         scroll={{
           x: 720,
           y: window.innerHeight - 193,
@@ -205,7 +194,7 @@ const ServiceIndex = () => {
           try {
             setLoading(true);
             setDeleteModal(false);
-            await serviceIndexApi.delete(currentRecord.key);
+            await purchaseApi.delete(currentRecord.key);
           } catch (error) {
           } finally {
             await fetchData();
@@ -220,7 +209,7 @@ const ServiceIndex = () => {
         <p>Bạn có chắc muốn xóa bản ghi này?</p>
       </Modal>
       <Modal
-        title={`Chỉnh sửa chỉ số ${typeName}`}
+        title={`Chỉnh sửa mua hàng`}
         width={800}
         open={editModal}
         onOk={async () => {
@@ -228,7 +217,7 @@ const ServiceIndex = () => {
             await addForm.validateFields();
             setLoading(true);
             setEditModal(false);
-            await serviceIndexApi.updateById(
+            await purchaseApi.updateById(
               currentRecord.uuid,
               editForm.getFieldsValue()
             );
@@ -255,6 +244,7 @@ const ServiceIndex = () => {
             ]}
           >
             <Select
+              disabled
               options={rooms?.map((item) => {
                 return { label: item.number, value: item.uuid };
               })}
@@ -262,8 +252,8 @@ const ServiceIndex = () => {
           </Form.Item>
 
           <Form.Item
-            name="index"
-            label="Chỉ số"
+            name="amount"
+            label="Số tiền (VND)"
             rules={[
               {
                 required: true,
@@ -271,6 +261,7 @@ const ServiceIndex = () => {
             ]}
           >
             <InputNumber
+              formatter={formatCurrency}
               style={{
                 width: "100%",
               }}
@@ -289,10 +280,13 @@ const ServiceIndex = () => {
           >
             <DatePicker placeholder="Chọn ngày" format="DD-MM-YYYY" />
           </Form.Item>
+          <Form.Item name="note" label="Ghi chú" rules={[]}>
+            <TextArea></TextArea>
+          </Form.Item>
         </Form>
       </Modal>
       <Modal
-        title={`Thêm mới chỉ số ${typeName}`}
+        title={`Thêm mới mua hàng`}
         width={800}
         open={addModal}
         onOk={async () => {
@@ -300,9 +294,8 @@ const ServiceIndex = () => {
             await addForm.validateFields();
             setLoading(true);
             setAddModal(false);
-            await serviceIndexApi.add({
+            await purchaseApi.add({
               ...addForm.getFieldsValue(),
-              type,
               room_id: rooms?.find(
                 (item) => item.number === addForm.getFieldValue("room_id")
               )?.uuid,
@@ -338,8 +331,8 @@ const ServiceIndex = () => {
           </Form.Item>
 
           <Form.Item
-            name="index"
-            label="Chỉ số"
+            name="amount"
+            label="Số tiền (VND)"
             rules={[
               {
                 required: true,
@@ -347,6 +340,7 @@ const ServiceIndex = () => {
             ]}
           >
             <InputNumber
+              formatter={formatCurrency}
               style={{
                 width: "100%",
               }}
@@ -365,10 +359,13 @@ const ServiceIndex = () => {
           >
             <DatePicker placeholder="Chọn ngày" format="DD-MM-YYYY" />
           </Form.Item>
+          <Form.Item name="note" label="Ghi chú" rules={[]}>
+            <TextArea></TextArea>
+          </Form.Item>
         </Form>
       </Modal>
-    </ServiceIndexWrapper>
+    </PurchaseWrapper>
   );
 };
 
-export default ServiceIndex;
+export default Purchase;

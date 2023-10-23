@@ -179,6 +179,9 @@ const serviceApi = {
   getById: (id) => {
     return axiosClient.get(`/service/${id}`);
   },
+  getByType: (type) => {
+    return axiosClient.get(`/service/type/${type}`);
+  },
   add: ({ name, price, unit }) => {
     return axiosClient.post("/service/add", {
       name,
@@ -214,6 +217,9 @@ const contractApi = {
     to_date,
     rent_cost_per_month,
     resident_list,
+    deposit,
+    type,
+    option_service,
   }) => {
     return axiosClient.post("/contract/add", {
       room_id,
@@ -222,6 +228,9 @@ const contractApi = {
       to_date,
       rent_cost_per_month,
       resident_list,
+      deposit,
+      type,
+      option_service,
     });
   },
   delete: (id) => {
@@ -229,7 +238,16 @@ const contractApi = {
   },
   updateById: (
     id,
-    { room_id, signer, from_date, to_date, rent_cost_per_month }
+    {
+      room_id,
+      signer,
+      from_date,
+      to_date,
+      rent_cost_per_month,
+      deposit,
+      type,
+      option_service,
+    }
   ) => {
     return axiosClient.post(`/contract/update/${id}`, {
       room_id,
@@ -237,6 +255,9 @@ const contractApi = {
       from_date,
       to_date,
       rent_cost_per_month,
+      deposit,
+      type,
+      option_service,
     });
   },
   setStatus: (status, id) => {
@@ -253,6 +274,14 @@ const serviceIndexApi = {
   getByType: (type, roomId) => {
     if (roomId)
       return axiosClient.get(`/service-index/type/${type}?room-id=${roomId}`);
+  },
+  getByMonth: (month, year, type, room_id) => {
+    return axiosClient.post(`/service-index/getbymonth`, {
+      month,
+      year,
+      type,
+      room_id,
+    });
   },
   add: ({ type, room_id, index, time_record }) => {
     return axiosClient.post("/service-index/add", {
@@ -273,6 +302,43 @@ const serviceIndexApi = {
     });
   },
 };
+const purchaseApi = {
+  getAll: () => {
+    return axiosClient.get("/purchase/getall");
+  },
+  getById: (id) => {
+    return axiosClient.get(`/purchase/${id}`);
+  },
+  getByRoomId: (id) => {
+    return axiosClient.get(`/purchase/getbyroom/${id}`);
+  },
+  getByMonth: (month, year, room_id) => {
+    return axiosClient.post(`/purchase/getbymonth`, {
+      month,
+      year,
+      room_id,
+    });
+  },
+  add: ({ room_id, amount, time_record, note }) => {
+    return axiosClient.post("/purchase/add", {
+      room_id,
+      amount,
+      time_record,
+      note,
+    });
+  },
+  delete: (id) => {
+    return axiosClient.delete(`/purchase/${id}`);
+  },
+  updateById: (id, { room_id, amount, time_record, note }) => {
+    return axiosClient.post(`/purchase/update/${id}`, {
+      room_id,
+      amount,
+      time_record,
+      note,
+    });
+  },
+};
 const accountApi = {
   getAll: () => {
     return axiosClient.get("/account/getall");
@@ -285,8 +351,17 @@ const accountApi = {
   },
 };
 const invoiceApi = {
-  createInvoices: ({ time, name, targetContracts }) => {
-    return axiosClient.post("/invoice/create", { time, name, targetContracts });
+  getAll: () => {
+    return axiosClient.get("/invoice/getall");
+  },
+  getByTime: ({ month, year }) => {
+    return axiosClient.post("/invoice/getbytime", { month, year });
+  },
+  createInvoices: (invoiceConfig) => {
+    return axiosClient.post("/invoice/create", invoiceConfig);
+  },
+  deleteInvoice: (id) => {
+    return axiosClient.delete(`/invoice/${id}`);
   },
 };
 export {
@@ -297,6 +372,7 @@ export {
   serviceApi,
   contractApi,
   serviceIndexApi,
+  purchaseApi,
   accountApi,
   invoiceApi,
 };

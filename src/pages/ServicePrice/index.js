@@ -65,6 +65,13 @@ const ServicePrice = () => {
       width: 100,
     },
     {
+      title: "Loại dịch vụ",
+      dataIndex: "type",
+      key: "type",
+      width: 100,
+      render: (text) => (text === "default" ? "Mặc định" : "Tùy chọn"),
+    },
+    {
       title: "Hành động",
       key: "action",
       fixed: "right",

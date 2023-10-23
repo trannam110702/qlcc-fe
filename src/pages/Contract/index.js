@@ -18,6 +18,7 @@ import { MessageContext } from "../../store/MessageContext";
 import { formatCurrency } from "../../ultils";
 import {
   contractApi,
+  serviceApi,
   roomApi,
   roomTypeApi,
   residentApi,
@@ -37,6 +38,7 @@ const ServicePrice = () => {
   const [emptyRooms, setEmptyRooms] = useState(null);
   const [roomTypes, setRoomTypes] = useState(null);
   const [residents, setResidents] = useState(null);
+  const [services, setServices] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const [, updateState] = useState();
@@ -87,6 +89,17 @@ const ServicePrice = () => {
         const resident = residents?.find((item) => item.uuid === text);
         return `${resident?.last_name} ${resident?.first_name}`;
       },
+    },
+    {
+      title: "Loại hợp đồng",
+      dataIndex: "type",
+      width: 100,
+      render: (text) => (text === "long-term" ? "Công ty" : "Ngoài"),
+      filters: [
+        { text: "Công ty", value: "long-term" },
+        { text: "Ngoài", value: "short-term" },
+      ],
+      onFilter: (value, record) => record.type.startsWith(value),
     },
     {
       title: "Ngày bắt đầu",
@@ -199,6 +212,16 @@ const ServicePrice = () => {
       );
     } catch (error) {}
   };
+  const getServices = async () => {
+    try {
+      const res = await serviceApi.getAll();
+      setServices(
+        res.data.map((item) => {
+          return { ...item, key: item.uuid };
+        })
+      );
+    } catch (error) {}
+  };
   const getRoomTypes = async () => {
     try {
       const res = await roomTypeApi.getAll();
@@ -222,6 +245,7 @@ const ServicePrice = () => {
       getResidents(),
       getRoomTypes(),
       getEmptyRooms(),
+      getServices(),
     ]).then(() => {
       setLoading(false);
     });
@@ -235,6 +259,7 @@ const ServicePrice = () => {
       <nav>
         <div className="title">Danh sách hợp đồng</div>
         <Button
+          disabled={services ? false : true}
           type="primary"
           onClick={() => {
             setAddModal(true);
@@ -311,6 +336,22 @@ const ServicePrice = () => {
       >
         <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} form={editForm}>
           <Form.Item
+            name="type"
+            label="Loại hợp đồng"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Select
+              options={[
+                { label: "Khách công ty", value: "long-term" },
+                { label: "Khách ngoài", value: "short-term" },
+              ]}
+            />
+          </Form.Item>
+          <Form.Item
             name="room_id"
             label="Phòng"
             rules={[
@@ -336,7 +377,6 @@ const ServicePrice = () => {
               }}
             />
           </Form.Item>
-
           <Form.Item
             name="signer"
             label="Người thuê"
@@ -385,6 +425,24 @@ const ServicePrice = () => {
               formatter={formatCurrency}
             />
           </Form.Item>
+          <Form.Item
+            name="deposit"
+            label="Đặt cọc"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <InputNumber
+              style={{
+                width: "100%",
+              }}
+              min="0"
+              step="1"
+              formatter={formatCurrency}
+            />
+          </Form.Item>
         </Form>
       </Modal>
       <Modal
@@ -395,7 +453,7 @@ const ServicePrice = () => {
           try {
             await addForm.validateFields();
             setLoading(true);
-            let data = addForm.getFieldsValue();
+            let data = addForm.getFieldsValue(true);
             data = {
               ...data,
               from_date: data.time_range[0].format("YYYY-MM-DD"),
@@ -414,142 +472,205 @@ const ServicePrice = () => {
           setAddModal(false);
         }}
       >
-        <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} form={addForm}>
-          <Form.Item
-            name="room_id"
-            label="Phòng (trống)"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            {emptyRooms && (
+        {services && (
+          <Form form={addForm} layout="vertical">
+            <Form.Item
+              name="type"
+              label="Loại hợp đồng"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
               <Select
-                options={rooms
-                  ?.filter((item) => {
-                    return emptyRooms.includes(item.uuid);
-                  })
-                  ?.map((item) => {
-                    return { label: item.number, value: item.uuid };
-                  })}
-                onChange={(value) => {
-                  const typeId = rooms.find(
-                    (item) => item.uuid === value
-                  ).type_id;
-
-                  addForm.setFieldValue(
-                    "rent_cost_per_month",
-                    roomTypes.find((item) => item.uuid === typeId)
-                      .default_rent_cost
-                  );
-                }}
+                options={[
+                  { label: "Khách công ty", value: "long-term" },
+                  { label: "Khách ngoài", value: "short-term" },
+                ]}
               />
-            )}
-          </Form.Item>
+            </Form.Item>
+            <Form.Item
+              name="room_id"
+              label="Phòng (trống)"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              {emptyRooms && (
+                <Select
+                  options={rooms
+                    ?.filter((item) => {
+                      return emptyRooms.includes(item.uuid);
+                    })
+                    ?.map((item) => {
+                      return { label: item.number, value: item.uuid };
+                    })}
+                  onChange={(value) => {
+                    const typeId = rooms.find(
+                      (item) => item.uuid === value
+                    ).type_id;
 
-          <Form.Item
-            name="signer"
-            label="Người thuê (cư dân chưa có phòng)"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Select
-              options={residents
-                ?.filter((item) => !item.room_id)
-                .map((item) => {
-                  return {
-                    label: `${item.last_name} ${item.first_name} (${item.citizen_id})`,
-                    value: item.uuid,
-                  };
-                })}
-            />
-          </Form.Item>
-          <Form.Item
-            name="time_range"
-            label="Thời gian thuê"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} />
-          </Form.Item>
-          <Form.Item
-            name="rent_cost_per_month"
-            label="Giá cho thuê (VND)"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <InputNumber
-              style={{
-                width: "100%",
-              }}
-              min="0"
-              step="1"
-              formatter={formatCurrency}
-            />
-          </Form.Item>
-          <Form.Item label="Thêm cư dân">
-            <Form.List name="resident_list">
-              {(fields, operation) => (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    rowGap: 16,
+                    addForm.setFieldValue(
+                      "rent_cost_per_month",
+                      roomTypes.find((item) => item.uuid === typeId)
+                        .default_rent_cost
+                    );
                   }}
-                >
-                  {fields.map((field) => (
-                    <div
-                      key={field.key}
-                      style={{ display: "flex", alignItems: "center" }}
-                    >
-                      <Form.Item
-                        style={{ flex: "1 0 auto" }}
-                        name={[field.name, "resident_id"]}
-                      >
-                        <Select
-                          options={residents
-                            ?.filter((item) => !item.room_id)
-                            .map((item) => {
-                              return {
-                                label: `${item.last_name} ${item.first_name} (${item.citizen_id})`,
-                                value: item.uuid,
-                              };
-                            })}
-                        />
-                      </Form.Item>
-
-                      <CloseOutlined
-                        style={{ marginBottom: "24px", marginLeft: "12px" }}
-                        onClick={() => {
-                          operation.remove(field.name);
-                        }}
-                      />
-                    </div>
-                  ))}
-                  <Button
-                    type="dashed"
-                    onClick={() => {
-                      operation.add();
-                    }}
-                    block
-                  >
-                    + Thêm cư dân
-                  </Button>
-                </div>
+                />
               )}
-            </Form.List>
-          </Form.Item>
-        </Form>
+            </Form.Item>
+
+            <Form.Item
+              name="signer"
+              label="Người thuê (cư dân chưa có phòng)"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Select
+                options={residents
+                  ?.filter((item) => !item.room_id)
+                  .map((item) => {
+                    return {
+                      label: `${item.last_name} ${item.first_name} (${item.citizen_id})`,
+                      value: item.uuid,
+                    };
+                  })}
+              />
+            </Form.Item>
+            <Form.Item
+              name="time_range"
+              label="Thời gian thuê"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} />
+            </Form.Item>
+            <Form.Item
+              name="rent_cost_per_month"
+              label="Giá cho thuê (VND)"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <InputNumber
+                style={{
+                  width: "100%",
+                }}
+                min="0"
+                step="1"
+                formatter={formatCurrency}
+              />
+            </Form.Item>
+            <Form.Item
+              name="deposit"
+              label="Đặt cọc"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <InputNumber
+                style={{
+                  width: "100%",
+                }}
+                min="0"
+                step="1"
+                formatter={formatCurrency}
+              />
+            </Form.Item>
+            <Form.Item label="Thêm cư dân">
+              <Form.List name="resident_list">
+                {(fields, operation) => (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      rowGap: 16,
+                    }}
+                  >
+                    {fields.map((field) => (
+                      <div
+                        key={field.key}
+                        style={{ display: "flex", alignItems: "center" }}
+                      >
+                        <Form.Item
+                          style={{ flex: "1 0 auto" }}
+                          key={field.key}
+                          name={field.key}
+                        >
+                          <Select
+                            options={residents
+                              ?.filter((item) => !item.room_id)
+                              .map((item) => {
+                                return {
+                                  label: `${item.last_name} ${item.first_name} (${item.citizen_id})`,
+                                  value: item.uuid,
+                                };
+                              })}
+                          />
+                        </Form.Item>
+
+                        <CloseOutlined
+                          style={{ marginBottom: "24px", marginLeft: "12px" }}
+                          onClick={() => {
+                            operation.remove(field.key);
+                          }}
+                        />
+                      </div>
+                    ))}
+                    <Button
+                      type="dashed"
+                      onClick={() => {
+                        operation.add();
+                      }}
+                      block
+                    >
+                      + Thêm cư dân
+                    </Button>
+                  </div>
+                )}
+              </Form.List>
+            </Form.Item>
+            <Form.Item name="option_service" label="Đăng kí dịch vụ thêm">
+              {services
+                .filter((item) => item.type === "option")
+                .map((item) => {
+                  return (
+                    <Form.Item
+                      key={item.uuid}
+                      name={["option_service", item.uuid]}
+                      label={item.name}
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        style={{
+                          width: "100%",
+                        }}
+                        min="0"
+                        step="1"
+                      />
+                    </Form.Item>
+                  );
+                })}
+            </Form.Item>
+          </Form>
+        )}
       </Modal>
     </ContractWrapper>
   );

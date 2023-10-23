@@ -1,4 +1,5 @@
 import axios from "axios";
+import { message } from "antd";
 // import qs from "query-string";
 const axiosClient = axios.create({
   baseURL: process.env.REACT_APP_SERVER_URL,
@@ -19,7 +20,7 @@ axiosClient.interceptors.response.use(
       window.localStorage.removeItem("userId");
       window.localStorage.removeItem("accountType");
       window.location.reload();
-    }
+    } else message.error({ content: "Đã xảy ra lỗi" });
     throw error;
   }
 );

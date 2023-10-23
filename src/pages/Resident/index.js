@@ -291,16 +291,8 @@ const Residents = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            name="room_id"
-            label="Phòng"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input disabled />
+          <Form.Item name="room_id" label="Phòng">
+            <Input />
           </Form.Item>
           <Form.Item name="owner" label="Là chủ phòng" valuePropName="checked">
             <Checkbox>Có là chủ phòng</Checkbox>

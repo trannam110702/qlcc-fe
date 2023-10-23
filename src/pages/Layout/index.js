@@ -35,6 +35,7 @@ const adminItems = [
   ]),
   getItem("Quản lý dịch vụ", "service", <BookOutlined />, [
     getItem("Bảng giá dịch vụ", "service-price"),
+    getItem("Mua hàng", "purchase"),
     getItem("Cập nhật chỉ số", "service-index", <></>, [
       getItem("Điện", "service/electric"),
       getItem("Nước", "service/water"),
