@@ -2,7 +2,9 @@ import axios from "axios";
 import { message } from "antd";
 // import qs from "query-string";
 const axiosClient = axios.create({
-  baseURL: process.env.REACT_APP_SERVER_URL && "http://localhost:3001",
+  baseURL: process.env.REACT_APP_SERVER_URL
+    ? process.env.REACT_APP_SERVER_URL
+    : "http://localhost:3001",
   headers: {
     "Content-type": "application/json",
   },

@@ -99,6 +99,11 @@ const FeedbackManager = () => {
       dataIndex: "status",
       key: "status",
       width: 200,
+      filters: [
+        { text: "Chưa xử lý", value: "pending" },
+        { text: "Đã xử lý", value: "fulfill" },
+      ],
+      onFilter: (value, record) => record.status.startsWith(value),
       render: (text) => <FeedbackStatusLabel status={text} />,
     },
     {

@@ -25,6 +25,7 @@ import FeedbackManager from "./pages/FeedbackManager";
 import Statistics from "./pages/Statistics";
 import TotalStatistics from "./pages/Statistics/TotalStatistics";
 import ServiceStatistics from "./pages/Statistics/ServiceStatistics";
+import Welcome from "./pages/Welcome";
 
 const router = createBrowserRouter([
   {
@@ -34,7 +35,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Statistics />,
+        element: <Welcome />,
       },
       {
         path: "roomtype",
