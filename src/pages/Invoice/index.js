@@ -72,21 +72,21 @@ const Invoice = () => {
     },
     {
       title: "Phòng",
-      dataIndex: "room_id",
-      key: "room_id",
+      dataIndex: "contract.room_id",
+      key: "contract.room_id",
       width: 100,
       defaultSortOrder: "descend",
-      sorter: (a, b) => {
-        const aNum = rooms.find((item) => item.uuid === a).number;
-        const bNum = rooms.find((item) => item.uuid === b).number;
-        if (aNum < bNum) {
-          return -1;
-        }
-        if (aNum > bNum) {
-          return 1;
-        }
-        return 0;
-      },
+      // sorter: (a, b) => {
+      //   const aNum = rooms.find((item) => item.uuid === a).number;
+      //   const bNum = rooms.find((item) => item.uuid === b).number;
+      //   if (aNum < bNum) {
+      //     return -1;
+      //   }
+      //   if (aNum > bNum) {
+      //     return 1;
+      //   }
+      //   return 0;
+      // },
       render: (text, record) => {
         return rooms.find((item) => item.uuid === record.contract.room_id)
           .number;
@@ -244,7 +244,7 @@ const Invoice = () => {
           />
         </div>
       </nav>
-      {rooms ? (
+      {rooms && invoices ? (
         <Table
           bordered
           className="main-table"
