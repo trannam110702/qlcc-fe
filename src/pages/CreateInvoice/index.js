@@ -21,19 +21,20 @@ import {
   serviceIndexApi,
   invoiceApi,
 } from "../../api/qlccApi";
-import { formatCurrency } from "../../ultils";
+import { MessageContext } from "../../store/MessageContext";
 
 const CreateInvoice = () => {
   const [form] = Form.useForm();
+  const { notifiApi } = useContext(MessageContext);
   const [contractsModal, setContractsModal] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [selectedContracts, setSelectedContracts] = useState([]);
   const [contracts, setContracts] = useState(null);
   const [rooms, setRooms] = useState(null);
   const [residents, setResidents] = useState(null);
-  const [services, setServices] = useState(null);
+
   const getContract = async () => {
     try {
       let contracts = (await contractApi.getByStatus("true")).data;
@@ -55,19 +56,10 @@ const CreateInvoice = () => {
       setResidents(residents.data);
     } catch (error) {}
   };
-  const getServicePrice = async () => {
-    try {
-      const services = await serviceApi.getAll();
-      setServices(services.data);
-    } catch (error) {}
-  };
   useEffect(() => {
-    Promise.all([
-      getContract(),
-      getRoom(),
-      getResident(),
-      getServicePrice(),
-    ]).then();
+    Promise.all([getContract(), getRoom(), getResident()]).then(() => {
+      setLoading(false);
+    });
   }, []);
   const columns = [
     {
@@ -153,7 +145,7 @@ const CreateInvoice = () => {
     <CreateInvoiceWrapper>
       <div className="title">Trình tạo hóa đơn</div>
       <ContentWrapper>
-        {contracts && rooms && residents ? (
+        {contracts && rooms && residents && !loading ? (
           <Form
             form={form}
             layout="vertical"
@@ -195,7 +187,15 @@ const CreateInvoice = () => {
             >
               <Input />
             </Form.Item>
-            <Form.Item name="contracts" label="Chọn hợp đồng làm hóa đơn">
+            <Form.Item
+              name="contracts"
+              label="Hợp đồng làm hóa đơn"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
               <Button
                 type="dashed"
                 onClick={() => {
@@ -225,11 +225,22 @@ const CreateInvoice = () => {
         open={confirmModal}
         onOk={async () => {
           try {
-            form.validateFields();
+            await form.validateFields();
             setLoading(true);
             setConfirmModal(false);
-            invoiceApi.createInvoices(form.getFieldsValue());
+            await invoiceApi.createInvoices(form.getFieldsValue());
+            notifiApi.success({
+              message: `Tạo tập hóa đơn thành công!`,
+              description: "Vui lòng kiểm tra hóa đơn đã tạo ở hóa đơn!",
+              placement: "bottomRight",
+            });
           } catch (error) {
+            notifiApi.error({
+              message: `Tạo tập hóa đơn thất bại!`,
+              description: "Vui lòng kiểm tra lại!",
+              placement: "bottomRight",
+            });
+            setConfirmModal(false);
           } finally {
             setLoading(false);
           }

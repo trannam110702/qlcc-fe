@@ -22,6 +22,9 @@ const InvoiceWrapper = styled.div`
   .ant-spin-container {
     height: 100%;
   }
+  .ant-table-header {
+    max-height: 64px;
+  }
 `;
 export const ButtonWrapper = styled.div`
   display: flex;
@@ -63,6 +66,42 @@ export const InvoiceDetailWrapper = styled.div`
   }
   .cal-total {
     margin: 1rem;
+  }
+  .pay-btn {
+    margin-left: 1rem;
+  }
+`;
+export const PaymentWrapper = styled.div`
+  padding-top: 1rem;
+  .main {
+    display: flex;
+    img {
+      width: 50%;
+      height: auto;
+    }
+    .info {
+      width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      .title {
+        font-weight: 700;
+      }
+      .row div {
+        font-size: 1rem;
+        align-self: center;
+      }
+    }
+  }
+  @media only screen and (max-width: 900px) {
+    .main {
+      flex-direction: column;
+      img,
+      .info {
+        width: 100%;
+      }
+    }
   }
 `;
 export default InvoiceWrapper;

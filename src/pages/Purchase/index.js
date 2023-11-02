@@ -141,7 +141,7 @@ const Purchase = () => {
   return (
     <PurchaseWrapper>
       <nav>
-        <div className="title">Danh sách mua hàng</div>
+        <div className="title">Danh sách nợ mua hàng</div>
         <div className="right">
           <Select
             loading={!rooms}

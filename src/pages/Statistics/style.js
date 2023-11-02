@@ -1,5 +1,5 @@
 import styled from "styled-components";
-const AccountsManagementWrapper = styled.div`
+const StatisticsWrapper = styled.div`
   padding: 0 1rem;
   nav {
     height: 64px;
@@ -11,20 +11,15 @@ const AccountsManagementWrapper = styled.div`
       font-size: 1rem;
       font-weight: bold;
     }
+    .right {
+      display: flex;
+      gap: 0.5rem;
+    }
   }
-  height: 100%;
   .main-table,
   .ant-spin-nested-loading,
   .ant-spin-container {
     height: 100%;
   }
-  .ant-table-header {
-    max-height: 64px;
-  }
 `;
-export const ButtonWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-`;
-
-export default AccountsManagementWrapper;
+export default StatisticsWrapper;

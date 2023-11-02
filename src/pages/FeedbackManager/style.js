@@ -1,11 +1,11 @@
 import styled from "styled-components";
-const AccountsManagementWrapper = styled.div`
+const FeedbackWrapper = styled.div`
   padding: 0 1rem;
   nav {
     height: 64px;
     padding: 0.5rem;
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     align-items: center;
     .title {
       font-size: 1rem;
@@ -26,5 +26,4 @@ export const ButtonWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
 `;
-
-export default AccountsManagementWrapper;
+export default FeedbackWrapper;

@@ -1,49 +1,31 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import InvoiceResident from "../InvoiceResident";
-import InvoiceWrapper, { ButtonWrapper, InvoiceDetailWrapper } from "./style";
-import {
-  Table,
-  Button,
-  Modal,
-  Form,
-  InputNumber,
-  Input,
-  Tag,
-  Select,
-  DatePicker,
-  Typography,
-} from "antd";
-
+import InvoiceWrapper, {
+  ButtonWrapper,
+  InvoiceDetailWrapper,
+  PaymentWrapper,
+} from "./style";
+import { Table, Button, Modal, Form, Typography, Row, Col } from "antd";
+import { AuthContext } from "../../hooks/useAuth";
+import { MessageContext } from "../../store/MessageContext";
 import IconButton from "../../components/IconButton";
 import { formatCurrency } from "../../ultils";
-import { MessageContext } from "../../store/MessageContext";
-import {
-  serviceApi,
-  invoiceApi,
-  residentApi,
-  roomApi,
-  contractApi,
-} from "../../api/qlccApi";
+import { invoiceApi, contractApi } from "../../api/residentApi";
+import { roomApi, residentApi } from "../../api/qlccApi";
+import { generateQR } from "../../api/vietQR";
 import AntdSpin from "../../components/Spin";
 import InvoiceStatusLabel from "../../components/InvoiceStatusLabel";
 import dayjs from "dayjs";
-const { Text } = Typography;
-const Invoice = () => {
+const { Text, Title } = Typography;
+const InvoiceResident = () => {
+  const { userData } = useContext(AuthContext);
   const [editForm] = Form.useForm();
-  const { notifiApi } = useContext(MessageContext);
+
   const [deleteModal, setDeleteModal] = useState(false);
   const [detailModal, setdetailModal] = useState(false);
+  const [paymentModal, setPaymentModal] = useState(false);
 
   const [currentRecord, setCurrentRecord] = useState(null);
-  const [rooms, setRooms] = useState(null);
-  const [contracts, setContracts] = useState(null);
-  const [services, setServices] = useState(null);
   const [invoices, setInvoices] = useState(null);
-  const [roomId, setRoomId] = useState(null);
-  const [time, setTime] = useState({
-    month: Number(dayjs().format("MM")),
-    year: Number(dayjs().format("YYYY")),
-  });
   const [loading, setLoading] = useState(false);
   const columns = [
     {
@@ -52,13 +34,12 @@ const Invoice = () => {
       dataIndex: "stt",
       key: "name",
       render: (text, record, index) => index + 1,
-      width: 50,
     },
     {
       title: "Tên hóa đơn",
       dataIndex: "name",
       key: "name",
-      width: 150,
+
       defaultSortOrder: "descend",
       sorter: (a, b) => {
         if (a.name < b.name) {
@@ -70,46 +51,19 @@ const Invoice = () => {
         return 0;
       },
     },
-    {
-      title: "Phòng",
-      dataIndex: "room_id",
-      key: "room_id",
-      width: 100,
-      defaultSortOrder: "descend",
-      sorter: (a, b) => {
-        const aNum = rooms.find((item) => item.uuid === a).number;
-        const bNum = rooms.find((item) => item.uuid === b).number;
-        if (aNum < bNum) {
-          return -1;
-        }
-        if (aNum > bNum) {
-          return 1;
-        }
-        return 0;
-      },
-      render: (text, record) => {
-        return rooms.find((item) => item.uuid === record.contract.room_id)
-          .number;
-      },
-    },
+
     {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
-      width: 100,
-      filters: [
-        { text: "Mới", value: "new" },
-        { text: "Chờ xác nhận", value: "pending" },
-        { text: "Đã thanh toán", value: "success" },
-      ],
-      onFilter: (value, record) => record.status.startsWith(value),
+
       render: (text) => <InvoiceStatusLabel status={text} />,
     },
     {
       title: "Tổng hóa đơn (VND)",
       dataIndex: "total",
       key: "total",
-      width: 100,
+
       render: (text, record) => {
         let total = record.rent_cost + record.purchase;
         total = record.detail.reduce(
@@ -122,17 +76,10 @@ const Invoice = () => {
     {
       title: "Hành động",
       key: "action",
-      fixed: "right",
+
       render: (text, record, index) => {
         return (
           <ButtonWrapper>
-            <IconButton
-              type="delete"
-              onclick={() => {
-                setCurrentRecord(record);
-                setDeleteModal(true);
-              }}
-            />
             <IconButton
               type="view"
               onclick={() => {
@@ -140,60 +87,29 @@ const Invoice = () => {
                 editForm.setFieldsValue(record);
                 setdetailModal(true);
               }}
-            />
-            {record.status !== "success" && (
-              <IconButton
-                type="confirm"
-                onclick={async () => {
-                  try {
-                    setLoading(true);
-                    await invoiceApi.updateStatus({
-                      status: "success",
-                      id: record.uuid,
-                    });
-                    notifiApi.success({
-                      message: `Cập nhật thành công!`,
-                      description: "",
-                      placement: "bottomRight",
-                    });
-                  } catch (error) {
-                  } finally {
-                    await getInvoices();
-                    setLoading(false);
-                  }
-                }}
-              />
-            )}
+            >
+              Xem
+            </IconButton>
+            <IconButton
+              type="transfer-money"
+              onclick={() => {
+                setCurrentRecord(record);
+                setPaymentModal(true);
+              }}
+            >
+              Thanh toán
+            </IconButton>
           </ButtonWrapper>
         );
       },
-      width: 100,
     },
   ];
-  const getRooms = async () => {
-    try {
-      const res = await roomApi.getAll();
-      setRooms(
-        res.data.map((item) => {
-          return { ...item, key: item.uuid };
-        })
-      );
-    } catch (error) {}
-  };
-  const getServices = async () => {
-    try {
-      const res = await serviceApi.getAll();
-      setServices(
-        res.data.map((item) => {
-          return { ...item, key: item.uuid };
-        })
-      );
-    } catch (error) {}
-  };
+
   const getInvoices = async () => {
     try {
       setLoading(true);
-      const res = await invoiceApi.getByTime(time);
+      const contracts = await contractApi.getBySigner(userData.resident_id);
+      const res = await invoiceApi.getByContract(contracts.data.uuid);
       setInvoices(
         res.data.map((item) => {
           return { ...item, key: item.uuid };
@@ -201,65 +117,30 @@ const Invoice = () => {
       );
     } catch (error) {}
   };
-  const getContracts = async () => {
-    try {
-      const contract = await contractApi.getByStatus("true");
-      setContracts(contract.data);
-    } catch (error) {}
-  };
   useEffect(() => {
-    if (time) {
-      setLoading(true);
-      Promise.all([
-        getInvoices(),
-        getRooms(),
-        getContracts(),
-        getServices(),
-      ]).then(() => {
-        setLoading(false);
-      });
-    }
-  }, [time]);
+    setLoading(true);
+    getInvoices().then(() => {
+      setLoading(false);
+    });
+  }, []);
   return (
     <InvoiceWrapper>
       <nav>
         <div className="title">Hóa đơn</div>
-        <div className="right">
-          <DatePicker
-            defaultValue={dayjs()}
-            placement="bottomRight"
-            picker="month"
-            placeholder="Chọn tháng"
-            format="MM-YYYY"
-            onChange={(value) => {
-              if (value) {
-                const month = Number(dayjs(value).format("MM"));
-                const year = Number(dayjs(value).format("YYYY"));
-                setTime({ month, year });
-              } else {
-                setTime(null);
-                setInvoices(null);
-              }
-            }}
-          />
-        </div>
+        <div className="right"></div>
       </nav>
-      {rooms ? (
-        <Table
-          bordered
-          className="main-table"
-          columns={columns}
-          pagination={false}
-          dataSource={invoices}
-          loading={rooms ? loading : true}
-          scroll={{
-            x: 1440,
-            y: window.innerHeight - 193,
-          }}
-        />
-      ) : (
-        <AntdSpin />
-      )}
+      <Table
+        bordered
+        className="main-table"
+        columns={columns}
+        pagination={false}
+        dataSource={invoices}
+        loading={loading}
+        scroll={{
+          x: 600,
+          y: window.innerHeight - 193,
+        }}
+      />
       <Modal
         title="Xác nhận xóa"
         open={deleteModal}
@@ -284,7 +165,17 @@ const Invoice = () => {
       <Modal
         width={1000}
         open={detailModal}
-        footer={null}
+        footer={[
+          <Button
+            type="primary"
+            onClick={() => {
+              setdetailModal(false);
+              setPaymentModal(true);
+            }}
+          >
+            Thanh toán
+          </Button>,
+        ]}
         onOk={async () => {}}
         onCancel={() => {
           setdetailModal(false);
@@ -296,6 +187,18 @@ const Invoice = () => {
         ) : (
           <AntdSpin></AntdSpin>
         )}
+      </Modal>
+      <Modal
+        width={1200}
+        open={paymentModal}
+        footer={null}
+        onOk={async () => {}}
+        onCancel={() => {
+          setPaymentModal(false);
+          setCurrentRecord(null);
+        }}
+      >
+        <Payment invoice={currentRecord} />
       </Modal>
     </InvoiceWrapper>
   );
@@ -311,17 +214,6 @@ const InvoiceDetail = ({ invoice }) => {
     );
     return formatCurrency(total);
   }, [invoice]);
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const roomRes = await roomApi.getById(invoice.contract.room_id);
-        const receiverRes = await residentApi.getById(invoice.contract.signer);
-        setRoom(roomRes.data);
-        setReceiver(receiverRes.data);
-      } catch (error) {}
-    };
-    getData();
-  }, []);
   const columns = [
     {
       align: "center",
@@ -372,6 +264,17 @@ const InvoiceDetail = ({ invoice }) => {
         formatCurrency(record.price * record.used_amount),
     },
   ];
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const roomRes = await roomApi.getById(invoice.contract.room_id);
+        const receiverRes = await residentApi.getById(invoice.contract.signer);
+        setRoom(roomRes.data);
+        setReceiver(receiverRes.data);
+      } catch (error) {}
+    };
+    getData();
+  }, []);
   return (
     <InvoiceDetailWrapper>
       {room && receiver ? (
@@ -449,4 +352,112 @@ const InvoiceDetail = ({ invoice }) => {
     </InvoiceDetailWrapper>
   );
 };
-export default Invoice;
+const Payment = ({ invoice }) => {
+  const { notifiApi } = useContext(MessageContext);
+  const [imgSrc, setImgSrc] = useState(null);
+  const [room, setRoom] = useState(null);
+  const amount = useMemo(() => {
+    let amount = invoice.rent_cost + invoice.purchase;
+    amount = invoice.detail.reduce(
+      (total, item) => total + item.price * item.used_amount,
+      amount
+    );
+    return amount;
+  }, []);
+  useEffect(() => {
+    const getRoom = async () => {
+      try {
+        const roomRes = await roomApi.getById(invoice.contract.room_id);
+        setRoom(roomRes.data);
+      } catch (error) {}
+    };
+    getRoom();
+  }, []);
+  useEffect(() => {
+    if (room) {
+      generateQR({
+        amount,
+        addInfo: `Thanh toan hoa don thang ${invoice.month} nam ${invoice.year} phong ${room.number}`,
+      }).then((res) => {
+        if (res.data.code === "00") setImgSrc(res.data.data.qrDataURL);
+      });
+    }
+  }, [room]);
+  return (
+    <PaymentWrapper>
+      {invoice && imgSrc ? (
+        <div className="main">
+          <img src={imgSrc}></img>
+          <div className="info">
+            <div className="main-info">
+              <Title level={3} style={{ textAlign: "center" }}>
+                Thông tin chuyển khoản
+              </Title>
+              <Row className="row">
+                <Col span={10} className="title">
+                  Số tài khoản:{" "}
+                </Col>
+                <Col span={14}>5600100288686</Col>
+              </Row>
+              <Row className="row">
+                <Col span={10} className="title">
+                  Ngân hàng thụ hưởng:{" "}
+                </Col>
+                <Col span={14}>MB Bank</Col>
+              </Row>
+              <Row className="row">
+                <Col span={10} className="title">
+                  Tên tài khoản thụ hưởng:{" "}
+                </Col>
+                <Col span={14}>LE NGOC MINH</Col>
+              </Row>
+              <Row className="row">
+                <Col span={10} className="title">
+                  Số tiền:{" "}
+                </Col>
+                <Col span={14}>{formatCurrency(amount)} VND</Col>
+              </Row>
+              <Row className="row">
+                <Col span={10} className="title">
+                  Nội dung chuyển khoản:{" "}
+                </Col>
+                <Col
+                  span={14}
+                >{`Thanh toan hoa don thang ${invoice.month} nam ${invoice.year} phong ${room.number}`}</Col>
+              </Row>
+              <Row
+                span={24}
+                style={{ justifyContent: "center", marginTop: "2rem" }}
+              >
+                {invoice.status === "new" && (
+                  <Button
+                    type="primary"
+                    onClick={async () => {
+                      try {
+                        await invoiceApi.updateStatus({
+                          status: "pending",
+                          id: invoice.uuid,
+                        });
+                        notifiApi.success({
+                          message: `Xác nhận thành công!`,
+                          description: "Vui lòng chờ ban quản trị phê duyệt!",
+                          placement: "bottomRight",
+                        });
+                      } catch (error) {}
+                    }}
+                    style={{ width: "100%" }}
+                  >
+                    Xác nhận đã thanh toán
+                  </Button>
+                )}
+              </Row>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <AntdSpin />
+      )}
+    </PaymentWrapper>
+  );
+};
+export default InvoiceResident;

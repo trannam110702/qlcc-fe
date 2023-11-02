@@ -9,6 +9,7 @@ import {
   PayCircleOutlined,
   StockOutlined,
   SettingOutlined,
+  SmileOutlined,
   LoadingOutlined,
 } from "@ant-design/icons";
 import Logo from "../../assets/images/logowhite.png";
@@ -35,7 +36,7 @@ const adminItems = [
   ]),
   getItem("Quản lý dịch vụ", "service", <BookOutlined />, [
     getItem("Bảng giá dịch vụ", "service-price"),
-    getItem("Mua hàng", "purchase"),
+    getItem("Nợ mua hàng", "purchase"),
     getItem("Cập nhật chỉ số", "service-index", <></>, [
       getItem("Điện", "service/electric"),
       getItem("Nước", "service/water"),
@@ -48,13 +49,13 @@ const adminItems = [
     getItem("Tạo hóa đơn hàng tháng", "invoice/create"),
     getItem("Hóa đơn", "invoice"),
   ]),
-  getItem("Thống kê", "statistics", <StockOutlined />),
+  getItem("Báo cáo & Thống kê", "statistics/room", <StockOutlined />),
+  getItem("Phản hồi cư dân", "feedback-manager", <SmileOutlined />),
   getItem("Quản lý tài khoản", "accounts", <SettingOutlined />),
 ];
 const residentItems = [
-  getItem("Hóa đơn", "invoice", <PayCircleOutlined />),
+  getItem("Hóa đơn", "resident-invoice", <PayCircleOutlined />),
   getItem("Phản hồi & Kiến nghị", "feed-back", <TeamOutlined />),
-  getItem("Quản lý tài khoản", "account", <SettingOutlined />),
 ];
 const MainLayout = ({ children }) => {
   let items;
@@ -116,7 +117,6 @@ const MainLayout = ({ children }) => {
             collapsed={collapsed}
             onCollapse={(value) => setCollapsed(value)}
           >
-            <div className="demo-logo-vertical" />
             <Menu
               mode="inline"
               items={items}

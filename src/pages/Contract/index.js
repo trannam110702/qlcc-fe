@@ -22,6 +22,7 @@ import {
   roomApi,
   roomTypeApi,
   residentApi,
+  contractServiceApi,
 } from "../../api/qlccApi";
 
 const ServicePrice = () => {
@@ -159,7 +160,7 @@ const ServicePrice = () => {
           <ButtonWrapper>
             <IconButton
               type="edit"
-              onclick={() => {
+              onclick={async () => {
                 setCurrentRecord(record);
                 editForm.setFieldsValue(record);
                 editForm.setFieldValue("time_range", [
@@ -167,6 +168,14 @@ const ServicePrice = () => {
                   dayjs(record.to_date),
                 ]);
                 setEditModal(true);
+                try {
+                  const res = await contractServiceApi.getByContractId(
+                    record.uuid
+                  );
+                  setCurrentRecord((prev) => {
+                    return { ...prev, contractservices: res.data };
+                  });
+                } catch (error) {}
               }}
             />
             <IconButton
@@ -443,6 +452,34 @@ const ServicePrice = () => {
               formatter={formatCurrency}
             />
           </Form.Item>
+          <div>Dịch vụ đăng ký</div>
+          {currentRecord?.contractservices ? (
+            currentRecord.contractservices.map((item) => {
+              return (
+                <Form.Item
+                  name={item.service_id}
+                  label={item.serivce_name}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    style={{
+                      width: "100%",
+                    }}
+                    min="0"
+                    step="1"
+                    defaultValue={item.register_amount}
+                    formatter={formatCurrency}
+                  />
+                </Form.Item>
+              );
+            })
+          ) : (
+            <AntdSpin />
+          )}
         </Form>
       </Modal>
       <Modal
@@ -602,13 +639,12 @@ const ServicePrice = () => {
                   >
                     {fields.map((field) => (
                       <div
-                        key={field.key}
+                        key={field.name}
                         style={{ display: "flex", alignItems: "center" }}
                       >
                         <Form.Item
                           style={{ flex: "1 0 auto" }}
-                          key={field.key}
-                          name={field.key}
+                          name={field.name}
                         >
                           <Select
                             options={residents
@@ -625,7 +661,8 @@ const ServicePrice = () => {
                         <CloseOutlined
                           style={{ marginBottom: "24px", marginLeft: "12px" }}
                           onClick={() => {
-                            operation.remove(field.key);
+                            console.log(field);
+                            operation.remove(field.name);
                           }}
                         />
                       </div>
@@ -634,6 +671,7 @@ const ServicePrice = () => {
                       type="dashed"
                       onClick={() => {
                         operation.add();
+                        console.log(fields);
                       }}
                       block
                     >

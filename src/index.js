@@ -9,7 +9,6 @@ import {
 import "./index.css";
 
 import App from "./App";
-import Welcome from "./pages/Welcome";
 import Rooms from "./pages/Rooms";
 import RoomType from "./pages/RoomType";
 import Residents from "./pages/Resident";
@@ -20,6 +19,12 @@ import Invoice from "./pages/Invoice";
 import CreateInvoice from "./pages/CreateInvoice";
 import AccountsManagement from "./pages/AccountsManagement";
 import Purchase from "./pages/Purchase";
+import InvoiceResident from "./pages/InvoiceResident";
+import Feedback from "./pages/Feedback";
+import FeedbackManager from "./pages/FeedbackManager";
+import Statistics from "./pages/Statistics";
+import TotalStatistics from "./pages/Statistics/TotalStatistics";
+import ServiceStatistics from "./pages/Statistics/ServiceStatistics";
 
 const router = createBrowserRouter([
   {
@@ -29,7 +34,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Welcome />,
+        element: <Statistics />,
       },
       {
         path: "roomtype",
@@ -64,12 +69,38 @@ const router = createBrowserRouter([
         element: <Invoice />,
       },
       {
+        path: "resident-invoice",
+        element: <InvoiceResident />,
+      },
+      {
         path: "invoice/create",
         element: <CreateInvoice />,
       },
       {
         path: "accounts",
         element: <AccountsManagement />,
+      },
+      {
+        path: "feed-back",
+        element: <Feedback />,
+      },
+      {
+        path: "feedback-manager",
+        element: <FeedbackManager />,
+      },
+      {
+        path: "statistics",
+        element: <Statistics />,
+        children: [
+          {
+            path: "room",
+            element: <TotalStatistics />,
+          },
+          {
+            path: "service",
+            element: <ServiceStatistics />,
+          },
+        ],
       },
     ],
   },

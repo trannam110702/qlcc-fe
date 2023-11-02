@@ -264,6 +264,11 @@ const contractApi = {
     return axiosClient.post(`/contract/status`, { status, id });
   },
 };
+const contractServiceApi = {
+  getByContractId: (id) => {
+    return axiosClient.get(`/contractservice/getbycontractid/${id}`);
+  },
+};
 const serviceIndexApi = {
   getAll: () => {
     return axiosClient.get("/service-index/getall");
@@ -343,6 +348,9 @@ const accountApi = {
   getAll: () => {
     return axiosClient.get("/account/getall");
   },
+  getById: (id) => {
+    return axiosClient.get(`/account/getbyid/${id}`);
+  },
   updatePassword: (username, password) => {
     return axiosClient.post(`/account/update`, { username, password });
   },
@@ -363,6 +371,25 @@ const invoiceApi = {
   deleteInvoice: (id) => {
     return axiosClient.delete(`/invoice/${id}`);
   },
+  updateStatus: ({ status, id }) => {
+    return axiosClient.post(`/invoice/updatestatus/`, { status, id });
+  },
+};
+const feedbackApi = {
+  getAll: () => {
+    return axiosClient.get("/feedback/getall");
+  },
+  deleteFeedback: (id) => {
+    return axiosClient.delete(`/feedback/${id}`);
+  },
+  updateStatus: (id, status) => {
+    return axiosClient.post(`/feedback/updatestatus/${id}`, { status });
+  },
+};
+const statisticApi = {
+  getTotalService: (time) => {
+    return axiosClient.post("/statistics/gettotalservice", time);
+  },
 };
 export {
   authApi,
@@ -371,8 +398,11 @@ export {
   residentApi,
   serviceApi,
   contractApi,
+  contractServiceApi,
   serviceIndexApi,
   purchaseApi,
   accountApi,
   invoiceApi,
+  feedbackApi,
+  statisticApi,
 };

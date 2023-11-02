@@ -6,17 +6,20 @@ import AuthProvider from "./hooks/useAuth";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import AntdThemeCustom from "./store/AntdThemeCustom";
 import MessageContextProvider from "./store/MessageContext";
+import StoreProvider from "./store/StoreProvider";
 
 function App() {
   return (
     <AuthProvider>
-      <AntdThemeCustom>
-        <MessageContextProvider>
-          <ProtectedRoute>
-            <Outlet />
-          </ProtectedRoute>
-        </MessageContextProvider>
-      </AntdThemeCustom>
+      <StoreProvider>
+        <AntdThemeCustom>
+          <MessageContextProvider>
+            <ProtectedRoute>
+              <Outlet />
+            </ProtectedRoute>
+          </MessageContextProvider>
+        </AntdThemeCustom>
+      </StoreProvider>
     </AuthProvider>
   );
 }
