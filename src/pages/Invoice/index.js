@@ -321,7 +321,7 @@ const InvoiceDetail = ({ invoice }) => {
       } catch (error) {}
     };
     getData();
-  }, []);
+  }, [invoice]);
   const columns = [
     {
       align: "center",
