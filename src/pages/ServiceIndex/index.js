@@ -170,10 +170,10 @@ const ServiceIndex = () => {
             }}
             placeholder="Chọn phòng"
             options={rooms?.map((item) => {
-              return { label: `Phòng ${item.number}`, value: item.number };
+              return { label: `Phòng ${item.number}`, value: item.uuid };
             })}
             onChange={(value) => {
-              setRoomId(rooms?.find((item) => item.number === value)?.uuid);
+              setRoomId(value);
             }}
           />
           <Button

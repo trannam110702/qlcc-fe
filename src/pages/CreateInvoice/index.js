@@ -264,6 +264,7 @@ const CreateInvoice = () => {
             setLoading(false);
           }
         }}
+        footer={null}
         onCancel={() => {
           setContractsModal(false);
           setLoading(false);
