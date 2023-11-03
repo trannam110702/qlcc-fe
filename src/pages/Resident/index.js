@@ -15,7 +15,7 @@ import {
 import { CheckCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import IconButton from "../../components/IconButton";
-
+import AntdSpin from "../../components/Spin";
 import { roomApi, residentApi } from "../../api/qlccApi";
 
 const Residents = () => {
@@ -84,6 +84,17 @@ const Residents = () => {
       dataIndex: "room_id",
       key: "room_id",
       width: 100,
+      filterSearch: true,
+      filters: rooms?.map((item) => {
+        return { text: item.number, value: item.uuid };
+      }),
+      onFilter: (value, record) => {
+        if (record.room_id) {
+          return record.room_id.startsWith(value);
+        } else {
+          return false;
+        }
+      },
       render: (text) => rooms?.find((item) => item.uuid === text)?.number,
     },
     {
@@ -170,18 +181,22 @@ const Residents = () => {
         </Button>
       </nav>
 
-      <Table
-        bordered
-        className="main-table"
-        columns={columns}
-        pagination={false}
-        dataSource={residents}
-        loading={loading}
-        scroll={{
-          x: 1440,
-          y: window.innerHeight - 193,
-        }}
-      />
+      {rooms ? (
+        <Table
+          bordered
+          className="main-table"
+          columns={columns}
+          pagination={false}
+          dataSource={residents}
+          loading={loading}
+          scroll={{
+            x: 1440,
+            y: window.innerHeight - 193,
+          }}
+        />
+      ) : (
+        <AntdSpin />
+      )}
       <Modal
         title="Xác nhận xóa"
         open={deleteModal}
