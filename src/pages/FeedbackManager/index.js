@@ -1,13 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import {
-  Table,
-  Button,
-  Modal,
-  Form,
-  InputNumber,
-  Input,
-  Typography,
-} from "antd";
+import { Table, Button, Modal, Form, InputNumber, Input, Typography } from "antd";
 
 import FeedbackWrapper, { ButtonWrapper } from "./style";
 import IconButton from "../../components/IconButton";
@@ -80,7 +72,7 @@ const FeedbackManager = () => {
       dataIndex: "room",
       key: "room",
       width: 100,
-      render: (text) => rooms?.find((item) => item.uuid === text).number,
+      render: (text) => rooms?.find((item) => item.uuid === text)?.number,
     },
     {
       title: "Tiêu đề",
