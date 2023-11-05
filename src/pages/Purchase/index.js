@@ -1,17 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import PurchaseWrapper, { ButtonWrapper } from "./style";
-import {
-  Table,
-  Button,
-  Modal,
-  Form,
-  InputNumber,
-  Switch,
-  Select,
-  DatePicker,
-  Input,
-} from "antd";
+import { Table, Button, Modal, Form, InputNumber, Switch, Select, DatePicker, Input } from "antd";
 import IconButton from "../../components/IconButton";
 import dayjs from "dayjs";
 import { purchaseApi, roomApi } from "../../api/qlccApi";
@@ -217,10 +207,7 @@ const Purchase = () => {
             await addForm.validateFields();
             setLoading(true);
             setEditModal(false);
-            await purchaseApi.updateById(
-              currentRecord.uuid,
-              editForm.getFieldsValue()
-            );
+            await purchaseApi.updateById(currentRecord.uuid, editForm.getFieldsValue());
           } catch (error) {
           } finally {
             editForm.resetFields();
@@ -296,9 +283,8 @@ const Purchase = () => {
             setAddModal(false);
             await purchaseApi.add({
               ...addForm.getFieldsValue(),
-              room_id: rooms?.find(
-                (item) => item.number === addForm.getFieldValue("room_id")
-              )?.uuid,
+              room_id: rooms?.find((item) => item.number === addForm.getFieldValue("room_id"))
+                ?.uuid,
             });
           } catch (error) {
           } finally {

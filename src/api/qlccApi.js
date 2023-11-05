@@ -93,15 +93,7 @@ const roomApi = {
   },
   updateById: (
     id,
-    {
-      number,
-      type_id,
-      status,
-      number_of_bed,
-      number_of_fridge,
-      number_of_ac,
-      number_of_desk,
-    }
+    { number, type_id, status, number_of_bed, number_of_fridge, number_of_ac, number_of_desk }
   ) => {
     return axiosClient.post(`/room/update/${id}`, {
       number,
@@ -127,15 +119,7 @@ const residentApi = {
   getById: (id) => {
     return axiosClient.get(`/resident/${id}`);
   },
-  add: ({
-    first_name,
-    last_name,
-    date_of_birth,
-    citizen_id,
-    phone_number,
-    room_id,
-    owner,
-  }) => {
+  add: ({ first_name, last_name, date_of_birth, citizen_id, phone_number, room_id, owner }) => {
     return axiosClient.post("/resident/add", {
       first_name,
       last_name,
@@ -151,15 +135,7 @@ const residentApi = {
   },
   updateById: (
     id,
-    {
-      first_name,
-      last_name,
-      date_of_birth,
-      citizen_id,
-      phone_number,
-      room_id,
-      owner,
-    }
+    { first_name, last_name, date_of_birth, citizen_id, phone_number, room_id, owner }
   ) => {
     return axiosClient.post(`/resident/update/${id}`, {
       first_name,
@@ -238,16 +214,7 @@ const contractApi = {
   },
   updateById: (
     id,
-    {
-      room_id,
-      signer,
-      from_date,
-      to_date,
-      rent_cost_per_month,
-      deposit,
-      type,
-      option_service,
-    }
+    { room_id, signer, from_date, to_date, rent_cost_per_month, deposit, type, option_service }
   ) => {
     return axiosClient.post(`/contract/update/${id}`, {
       room_id,
@@ -277,8 +244,7 @@ const serviceIndexApi = {
     return axiosClient.get(`/service-index/${id}`);
   },
   getByType: (type, roomId) => {
-    if (roomId)
-      return axiosClient.get(`/service-index/type/${type}?room-id=${roomId}`);
+    if (roomId) return axiosClient.get(`/service-index/type/${type}?room-id=${roomId}`);
   },
   getByMonth: (month, year, type, room_id) => {
     return axiosClient.post(`/service-index/getbymonth`, {
