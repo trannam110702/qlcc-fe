@@ -1,16 +1,7 @@
 import React, { useState, useEffect, useContext, useCallback } from "react";
 import dayjs from "dayjs";
 import ContractWrapper, { ButtonWrapper } from "./style";
-import {
-  Table,
-  Button,
-  Modal,
-  Form,
-  InputNumber,
-  Switch,
-  DatePicker,
-  Select,
-} from "antd";
+import { Table, Button, Modal, Form, InputNumber, Switch, DatePicker, Select } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import AntdSpin from "../../components/Spin";
 import IconButton from "../../components/IconButton";
@@ -41,8 +32,6 @@ const ServicePrice = () => {
   const [residents, setResidents] = useState(null);
   const [services, setServices] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const [, updateState] = useState();
 
   const columns = [
     {
@@ -144,9 +133,7 @@ const ServicePrice = () => {
                 setLoading(false);
               }}
             />
-            <span style={{ marginLeft: "1rem" }}>
-              {text ? "Có hiệu lực" : "Vô hiệu"}
-            </span>
+            <span style={{ marginLeft: "1rem" }}>{text ? "Có hiệu lực" : "Vô hiệu"}</span>
           </>
         );
       },
@@ -169,9 +156,7 @@ const ServicePrice = () => {
                 ]);
                 setEditModal(true);
                 try {
-                  const res = await contractServiceApi.getByContractId(
-                    record.uuid
-                  );
+                  const res = await contractServiceApi.getByContractId(record.uuid);
                   setCurrentRecord((prev) => {
                     return { ...prev, contractservices: res.data };
                   });
@@ -375,13 +360,10 @@ const ServicePrice = () => {
                 return { label: item.number, value: item.uuid };
               })}
               onChange={(value) => {
-                const typeId = rooms.find(
-                  (item) => item.uuid === value
-                ).type_id;
+                const typeId = rooms.find((item) => item.uuid === value).type_id;
                 editForm.setFieldValue(
                   "rent_cost_per_month",
-                  roomTypes.find((item) => item.uuid === typeId)
-                    .default_rent_cost
+                  roomTypes.find((item) => item.uuid === typeId).default_rent_cost
                 );
               }}
             />
@@ -455,6 +437,7 @@ const ServicePrice = () => {
           <div>Dịch vụ đăng ký</div>
           {currentRecord?.contractservices ? (
             currentRecord.contractservices.map((item) => {
+              editForm.setFieldValue(item.service_id, item.register_amount);
               return (
                 <Form.Item
                   name={item.service_id}
@@ -471,8 +454,6 @@ const ServicePrice = () => {
                     }}
                     min="0"
                     step="1"
-                    defaultValue={item.register_amount}
-                    formatter={formatCurrency}
                   />
                 </Form.Item>
               );
@@ -546,14 +527,11 @@ const ServicePrice = () => {
                       return { label: item.number, value: item.uuid };
                     })}
                   onChange={(value) => {
-                    const typeId = rooms.find(
-                      (item) => item.uuid === value
-                    ).type_id;
+                    const typeId = rooms.find((item) => item.uuid === value).type_id;
 
                     addForm.setFieldValue(
                       "rent_cost_per_month",
-                      roomTypes.find((item) => item.uuid === typeId)
-                        .default_rent_cost
+                      roomTypes.find((item) => item.uuid === typeId).default_rent_cost
                     );
                   }}
                 />
@@ -638,14 +616,8 @@ const ServicePrice = () => {
                     }}
                   >
                     {fields.map((field) => (
-                      <div
-                        key={field.name}
-                        style={{ display: "flex", alignItems: "center" }}
-                      >
-                        <Form.Item
-                          style={{ flex: "1 0 auto" }}
-                          name={field.name}
-                        >
+                      <div key={field.name} style={{ display: "flex", alignItems: "center" }}>
+                        <Form.Item style={{ flex: "1 0 auto" }} name={field.name}>
                           <Select
                             options={residents
                               ?.filter((item) => !item.room_id)

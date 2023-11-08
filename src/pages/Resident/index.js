@@ -81,21 +81,20 @@ const Residents = () => {
     },
     {
       title: "Phòng",
-      dataIndex: "room_id",
-      key: "room_id",
+      dataIndex: "room",
+      key: "room",
       width: 100,
       filterSearch: true,
       filters: rooms?.map((item) => {
-        return { text: item.number, value: item.uuid };
+        return { text: item.number, value: item.number };
       }),
       onFilter: (value, record) => {
-        if (record.room_id) {
-          return record.room_id.startsWith(value);
+        if (record.room) {
+          return record.room.toString().startsWith(value);
         } else {
           return false;
         }
       },
-      render: (text) => rooms?.find((item) => item.uuid === text)?.number,
     },
     {
       title: "Chủ phòng",
@@ -141,17 +140,13 @@ const Residents = () => {
   const getData = async () => {
     try {
       const res = await residentApi.getAll();
-      setResidents(
-        res.data.map((item) => {
+      const roomsData = await roomApi.getAll();
+      setRooms(
+        roomsData.data.map((item) => {
           return { ...item, key: item.uuid };
         })
       );
-    } catch (error) {}
-  };
-  const getRooms = async () => {
-    try {
-      const res = await roomApi.getAll();
-      setRooms(
+      setResidents(
         res.data.map((item) => {
           return { ...item, key: item.uuid };
         })
@@ -160,7 +155,7 @@ const Residents = () => {
   };
 
   useEffect(() => {
-    Promise.all([getData(), getRooms()]).then(() => {
+    Promise.all([getData()]).then(() => {
       setLoading(false);
     });
   }, []);
@@ -230,9 +225,7 @@ const Residents = () => {
             setEditModal(false);
             await residentApi.updateById(currentRecord.key, {
               ...form.getFieldsValue(),
-              date_of_birth: form
-                .getFieldValue("date_of_birth")
-                .format("YYYY-MM-DD"),
+              date_of_birth: form.getFieldValue("date_of_birth").format("YYYY-MM-DD"),
             });
           } catch (error) {
           } finally {
@@ -306,9 +299,6 @@ const Residents = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item name="room_id" label="Phòng">
-            <Input />
-          </Form.Item>
           <Form.Item name="owner" label="Là chủ phòng" valuePropName="checked">
             <Checkbox>Có là chủ phòng</Checkbox>
           </Form.Item>
@@ -325,9 +315,7 @@ const Residents = () => {
             setAddModal(false);
             await residentApi.add({
               ...formAdd.getFieldsValue(),
-              date_of_birth: formAdd
-                .getFieldValue("date_of_birth")
-                .format("YYYY-MM-DD"),
+              date_of_birth: formAdd.getFieldValue("date_of_birth").format("YYYY-MM-DD"),
             });
           } catch (error) {
           } finally {

@@ -119,31 +119,27 @@ const residentApi = {
   getById: (id) => {
     return axiosClient.get(`/resident/${id}`);
   },
-  add: ({ first_name, last_name, date_of_birth, citizen_id, phone_number, room_id, owner }) => {
+  add: ({ first_name, last_name, date_of_birth, citizen_id, phone_number, contract_id, owner }) => {
     return axiosClient.post("/resident/add", {
       first_name,
       last_name,
       date_of_birth,
       citizen_id,
       phone_number,
-      room_id,
+      contract_id,
       owner,
     });
   },
   delete: (id) => {
     return axiosClient.delete(`/resident/${id}`);
   },
-  updateById: (
-    id,
-    { first_name, last_name, date_of_birth, citizen_id, phone_number, room_id, owner }
-  ) => {
+  updateById: (id, { first_name, last_name, date_of_birth, citizen_id, phone_number, owner }) => {
     return axiosClient.post(`/resident/update/${id}`, {
       first_name,
       last_name,
       date_of_birth,
       citizen_id,
       phone_number,
-      room_id,
       owner,
     });
   },

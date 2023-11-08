@@ -11,7 +11,6 @@ import dayjs from "dayjs";
 const FeedbackManager = () => {
   const [loading, setLoading] = useState(true);
   const [feedbacks, setFeedbacks] = useState(null);
-  const [rooms, setRooms] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const [currentRecord, setCurrentRecord] = useState(null);
   const getData = async () => {
@@ -23,14 +22,7 @@ const FeedbackManager = () => {
           return {
             ...item,
             resident_name: `${resident.last_name} ${resident.first_name}`,
-            room: resident.room_id,
           };
-        })
-      );
-      const rooms = await roomApi.getAll();
-      setRooms(
-        rooms.data.map((item) => {
-          return { ...item, key: item.uuid };
         })
       );
       setFeedbacks(
@@ -70,7 +62,6 @@ const FeedbackManager = () => {
       dataIndex: "room",
       key: "room",
       width: 100,
-      render: (text) => rooms?.find((item) => item.uuid === text)?.number,
     },
     {
       title: "Tiêu đề",
@@ -136,22 +127,20 @@ const FeedbackManager = () => {
       <nav>
         <div className="title">Danh sách phản hồi của cư dân</div>
       </nav>
-      {!loading && rooms ? (
-        <Table
-          bordered
-          className="main-table"
-          columns={columns}
-          pagination={false}
-          dataSource={feedbacks}
-          loading={!feedbacks}
-          scroll={{
-            x: 1440,
-            y: window.innerHeight - 193,
-          }}
-        />
-      ) : (
-        <AntdSpin />
-      )}
+
+      <Table
+        bordered
+        className="main-table"
+        columns={columns}
+        pagination={false}
+        dataSource={feedbacks}
+        loading={!feedbacks}
+        scroll={{
+          x: 1440,
+          y: window.innerHeight - 193,
+        }}
+      />
+
       <Modal
         title="Xác nhận xóa"
         open={deleteModal}

@@ -17,13 +17,7 @@ import {
 import IconButton from "../../components/IconButton";
 import { formatCurrency } from "../../ultils";
 import { MessageContext } from "../../store/MessageContext";
-import {
-  serviceApi,
-  invoiceApi,
-  residentApi,
-  roomApi,
-  contractApi,
-} from "../../api/qlccApi";
+import { serviceApi, invoiceApi, residentApi, roomApi, contractApi } from "../../api/qlccApi";
 import AntdSpin from "../../components/Spin";
 import InvoiceStatusLabel from "../../components/InvoiceStatusLabel";
 import dayjs from "dayjs";
@@ -76,20 +70,18 @@ const Invoice = () => {
       key: "contract.room_id",
       width: 100,
       defaultSortOrder: "descend",
-      // sorter: (a, b) => {
-      //   const aNum = rooms.find((item) => item.uuid === a).number;
-      //   const bNum = rooms.find((item) => item.uuid === b).number;
-      //   if (aNum < bNum) {
-      //     return -1;
-      //   }
-      //   if (aNum > bNum) {
-      //     return 1;
-      //   }
-      //   return 0;
-      // },
+      filters: rooms?.map((item) => {
+        return { text: item.number, value: item.uuid };
+      }),
+      onFilter: (value, record) => {
+        if (record.contract.room_id) {
+          return record.contract.room_id.toString().startsWith(value);
+        } else {
+          return false;
+        }
+      },
       render: (text, record) => {
-        return rooms.find((item) => item.uuid === record.contract.room_id)
-          .number;
+        return rooms.find((item) => item.uuid === record.contract.room_id).number;
       },
     },
     {
@@ -112,10 +104,7 @@ const Invoice = () => {
       width: 100,
       render: (text, record) => {
         let total = record.rent_cost + record.purchase;
-        total = record.detail.reduce(
-          (total, item) => total + item.price * item.used_amount,
-          total
-        );
+        total = record.detail.reduce((total, item) => total + item.price * item.used_amount, total);
         return formatCurrency(total);
       },
     },
@@ -210,12 +199,7 @@ const Invoice = () => {
   useEffect(() => {
     if (time) {
       setLoading(true);
-      Promise.all([
-        getInvoices(),
-        getRooms(),
-        getContracts(),
-        getServices(),
-      ]).then(() => {
+      Promise.all([getInvoices(), getRooms(), getContracts(), getServices()]).then(() => {
         setLoading(false);
       });
     }
@@ -291,11 +275,7 @@ const Invoice = () => {
           setCurrentRecord(null);
         }}
       >
-        {currentRecord ? (
-          <InvoiceDetail invoice={currentRecord} />
-        ) : (
-          <AntdSpin></AntdSpin>
-        )}
+        {currentRecord ? <InvoiceDetail invoice={currentRecord} /> : <AntdSpin></AntdSpin>}
       </Modal>
     </InvoiceWrapper>
   );
@@ -305,10 +285,7 @@ const InvoiceDetail = ({ invoice }) => {
   const [receiver, setReceiver] = useState(null);
   const totalInvoice = useMemo(() => {
     let total = invoice.rent_cost + invoice.purchase;
-    total = invoice.detail.reduce(
-      (total, item) => total + item.price * item.used_amount,
-      total
-    );
+    total = invoice.detail.reduce((total, item) => total + item.price * item.used_amount, total);
     return formatCurrency(total);
   }, [invoice]);
   useEffect(() => {
@@ -368,8 +345,7 @@ const InvoiceDetail = ({ invoice }) => {
       dataIndex: "total",
       key: "total",
       width: 100,
-      render: (text, record) =>
-        formatCurrency(record.price * record.used_amount),
+      render: (text, record) => formatCurrency(record.price * record.used_amount),
     },
   ];
   return (
@@ -407,10 +383,7 @@ const InvoiceDetail = ({ invoice }) => {
               y: window.innerHeight - 193,
             }}
             summary={(data) => {
-              const total = data.reduce(
-                (total, item) => total + item.price * item.used_amount,
-                0
-              );
+              const total = data.reduce((total, item) => total + item.price * item.used_amount, 0);
               return (
                 <>
                   <Table.Summary.Row>
@@ -438,8 +411,7 @@ const InvoiceDetail = ({ invoice }) => {
           </div>
           <div className="date">
             Ngày {dayjs(invoice.creat_time).format("DD")} tháng{" "}
-            {dayjs(invoice.creat_time).format("MM")} năm{" "}
-            {dayjs(invoice.creat_time).format("YYYY")}
+            {dayjs(invoice.creat_time).format("MM")} năm {dayjs(invoice.creat_time).format("YYYY")}
           </div>
           <div className="signatrue">Ngọc Minh luxury building</div>
         </>
