@@ -298,7 +298,9 @@ const ServicePrice = () => {
           setCurrentRecord(null);
         }}
       >
-        <p>Bạn có chắc muốn xóa bản ghi này?</p>
+        <p>
+          Bạn có chắc muốn xóa bản ghi này? <br /> Hành động này sẽ xóa cư dân và hóa đơn đi kèm
+        </p>
       </Modal>
       <Modal
         title="Chỉnh sửa"
@@ -549,13 +551,18 @@ const ServicePrice = () => {
             >
               <Select
                 options={residents
-                  ?.filter((item) => !item.room_id)
+                  ?.filter((item) => !item.contract_id)
+                  ?.filter((item) => item.owner === true)
                   .map((item) => {
                     return {
                       label: `${item.last_name} ${item.first_name} (${item.citizen_id})`,
                       value: item.uuid,
                     };
                   })}
+                onChange={(value) => {
+                  addForm.setFieldValue("resident_list", []);
+                  addForm.setFieldValue("people", [value]);
+                }}
               />
             </Form.Item>
             <Form.Item
@@ -620,7 +627,8 @@ const ServicePrice = () => {
                         <Form.Item style={{ flex: "1 0 auto" }} name={field.name}>
                           <Select
                             options={residents
-                              ?.filter((item) => !item.room_id)
+                              ?.filter((item) => !item.room_id && !item.owner)
+
                               .map((item) => {
                                 return {
                                   label: `${item.last_name} ${item.first_name} (${item.citizen_id})`,
@@ -633,7 +641,6 @@ const ServicePrice = () => {
                         <CloseOutlined
                           style={{ marginBottom: "24px", marginLeft: "12px" }}
                           onClick={() => {
-                            console.log(field);
                             operation.remove(field.name);
                           }}
                         />
@@ -642,8 +649,8 @@ const ServicePrice = () => {
                     <Button
                       type="dashed"
                       onClick={() => {
-                        operation.add();
                         console.log(fields);
+                        operation.add();
                       }}
                       block
                     >
