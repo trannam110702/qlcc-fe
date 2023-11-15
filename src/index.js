@@ -1,10 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Navigate,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 
 import "./index.css";
 
@@ -25,6 +21,7 @@ import FeedbackManager from "./pages/FeedbackManager";
 import Statistics from "./pages/Statistics";
 import TotalStatistics from "./pages/Statistics/TotalStatistics";
 import ServiceStatistics from "./pages/Statistics/ServiceStatistics";
+import CombineStatistics from "./pages/Statistics/CombineStatistics";
 import Welcome from "./pages/Welcome";
 
 const router = createBrowserRouter([
@@ -100,6 +97,10 @@ const router = createBrowserRouter([
           {
             path: "service",
             element: <ServiceStatistics />,
+          },
+          {
+            path: "combine",
+            element: <CombineStatistics />,
           },
         ],
       },

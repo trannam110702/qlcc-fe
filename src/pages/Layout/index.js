@@ -49,7 +49,7 @@ const adminItems = [
     getItem("Tạo hóa đơn hàng tháng", "invoice/create"),
     getItem("Hóa đơn", "invoice"),
   ]),
-  getItem("Báo cáo & Thống kê", "statistics/room", <StockOutlined />),
+  getItem("Báo cáo & Thống kê", "statistics/combine", <StockOutlined />),
   getItem("Phản hồi cư dân", "feedback-manager", <SmileOutlined />),
   getItem("Quản lý tài khoản", "accounts", <SettingOutlined />),
 ];

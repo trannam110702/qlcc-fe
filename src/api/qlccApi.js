@@ -352,6 +352,9 @@ const statisticApi = {
   getTotalService: (time) => {
     return axiosClient.post("/statistics/gettotalservice", time);
   },
+  getCombineStatistics: (time) => {
+    return axiosClient.post("/statistics/getcombinestatistics", time);
+  },
 };
 export {
   authApi,

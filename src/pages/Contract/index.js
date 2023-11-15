@@ -199,6 +199,7 @@ const ServicePrice = () => {
   const getResidents = async () => {
     try {
       const res = await residentApi.getAll();
+
       setResidents(
         res.data.map((item) => {
           return { ...item, key: item.uuid };
@@ -627,7 +628,7 @@ const ServicePrice = () => {
                         <Form.Item style={{ flex: "1 0 auto" }} name={field.name}>
                           <Select
                             options={residents
-                              ?.filter((item) => !item.room_id && !item.owner)
+                              ?.filter((item) => !item.room && !item.owner)
 
                               .map((item) => {
                                 return {
@@ -649,7 +650,6 @@ const ServicePrice = () => {
                     <Button
                       type="dashed"
                       onClick={() => {
-                        console.log(fields);
                         operation.add();
                       }}
                       block

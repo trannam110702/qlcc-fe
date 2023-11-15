@@ -5,6 +5,10 @@ import StatisticsWrapper from "./style";
 import dayjs from "dayjs";
 const items = [
   {
+    label: <Link to="/statistics/combine">Báo cáo tổng hợp</Link>,
+    key: "combine",
+  },
+  {
     label: <Link to="/statistics/room">Doanh thu tiền phòng</Link>,
     key: "room",
   },
@@ -18,7 +22,7 @@ const Statistics = () => {
     month: Number(dayjs().format("MM")),
     year: Number(dayjs().format("YYYY")),
   });
-  const [current, setCurrent] = useState("room");
+  const [current, setCurrent] = useState("combine");
   return (
     <StatisticsWrapper>
       <nav>
