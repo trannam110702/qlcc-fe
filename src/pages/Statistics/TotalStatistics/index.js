@@ -47,21 +47,8 @@ const TotalStatistics = () => {
       dataIndex: "room_id",
       key: "room_id",
       width: 100,
-      defaultSortOrder: "descend",
-      sorter: (a, b) => {
-        const aNum = rooms.find((item) => item.uuid === a)?.number;
-        const bNum = rooms.find((item) => item.uuid === b)?.number;
-        if (aNum < bNum) {
-          return -1;
-        }
-        if (aNum > bNum) {
-          return 1;
-        }
-        return 0;
-      },
       render: (text, record) => {
-        return rooms.find((item) => item.uuid === record?.contract?.room_id)
-          .number;
+        return rooms.find((item) => item.uuid === record?.contract?.room_id).number;
       },
     },
     {
@@ -89,22 +76,15 @@ const TotalStatistics = () => {
             y: window.innerHeight - 239,
           }}
           summary={(data) => {
-            const total = data.reduce(
-              (total, item) => total + item.rent_cost,
-              0
-            );
+            const total = data.reduce((total, item) => total + item.rent_cost, 0);
             return (
               <>
                 <Table.Summary.Row>
                   <Table.Summary.Cell index={0} colSpan={2} align="center">
-                    <span style={{ fontWeight: "bold" }}>
-                      Tổng doanh thu tiền phòng
-                    </span>
+                    <span style={{ fontWeight: "bold" }}>Tổng doanh thu tiền phòng</span>
                   </Table.Summary.Cell>
                   <Table.Summary.Cell index={2} align="center">
-                    <span style={{ fontWeight: "bold" }}>
-                      {formatCurrency(total)}
-                    </span>
+                    <span style={{ fontWeight: "bold" }}>{formatCurrency(total)}</span>
                   </Table.Summary.Cell>
                 </Table.Summary.Row>
               </>
