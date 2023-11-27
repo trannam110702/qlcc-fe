@@ -23,6 +23,7 @@ import TotalStatistics from "./pages/Statistics/TotalStatistics";
 import ServiceStatistics from "./pages/Statistics/ServiceStatistics";
 import CombineStatistics from "./pages/Statistics/CombineStatistics";
 import Welcome from "./pages/Welcome";
+import Backup from "./pages/Backup";
 
 const router = createBrowserRouter([
   {
@@ -85,6 +86,10 @@ const router = createBrowserRouter([
       {
         path: "feedback-manager",
         element: <FeedbackManager />,
+      },
+      {
+        path: "back-up",
+        element: <Backup />,
       },
       {
         path: "statistics",

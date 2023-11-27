@@ -52,6 +52,7 @@ const adminItems = [
   getItem("Báo cáo & Thống kê", "statistics/combine", <StockOutlined />),
   getItem("Phản hồi cư dân", "feedback-manager", <SmileOutlined />),
   getItem("Quản lý tài khoản", "accounts", <SettingOutlined />),
+  // getItem("Backup dữ liệu", "back-up", <SettingOutlined />),
 ];
 const residentItems = [
   getItem("Hóa đơn", "resident-invoice", <PayCircleOutlined />),

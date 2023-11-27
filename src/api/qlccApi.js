@@ -356,6 +356,14 @@ const statisticApi = {
     return axiosClient.post("/statistics/getcombinestatistics", time);
   },
 };
+const backupApi = {
+  getAll: () => {
+    return axiosClient.get("/backup/getall");
+  },
+  add: (name, time) => {
+    return axiosClient.post("/backup/add", { name, time });
+  },
+};
 export {
   authApi,
   roomTypeApi,
@@ -370,4 +378,5 @@ export {
   invoiceApi,
   feedbackApi,
   statisticApi,
+  backupApi,
 };

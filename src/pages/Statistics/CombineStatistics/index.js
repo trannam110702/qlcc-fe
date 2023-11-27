@@ -128,11 +128,21 @@ const CombineStatistics = () => {
           }}
           summary={(data) => {
             const total = data.reduce((total, item) => total + item.rent_cost, 0);
+            const totalService = data.reduce((total, item) => {
+              const totalDetail = item.detail.reduce(
+                (total, item) => total + item.price * item.used_amount,
+                0
+              );
+              return total + totalDetail;
+            }, 0);
+
             return (
               <>
                 <Table.Summary.Row>
                   <Table.Summary.Cell index={0} colSpan={2} align="center">
-                    <span style={{ fontWeight: "bold" }}>Tổng doanh thu</span>
+                    <span style={{ fontWeight: "bold" }}>
+                      Tổng doanh thu: <br /> {formatCurrency(total + totalService)} VND
+                    </span>
                   </Table.Summary.Cell>
                   <Table.Summary.Cell colSpan={1} align="center">
                     <span style={{ fontWeight: "bold" }}>{formatCurrency(total)}</span>
